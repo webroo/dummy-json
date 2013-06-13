@@ -1,0 +1,15 @@
+{
+  "name": "dummy-json",
+  "version": "0.0.1",
+  "description": "Dummy JSON generator for Node.js",
+  "author": "Matt Sweetman",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "main": "./dummy-json.js",
+  "dependencies": {
+    "handlebars": "~1.0.12"
+  }
+}
