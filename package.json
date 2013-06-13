@@ -1,12 +1,13 @@
 {
   "name": "dummy-json",
-  "version": "0.0.1",
   "description": "Dummy JSON generator for Node.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/webroo/dummy-json",
   "author": "Matt Sweetman",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git://github.com/webroo/dummy-json.git"
   },
   "main": "./dummy-json.js",
   "dependencies": {
