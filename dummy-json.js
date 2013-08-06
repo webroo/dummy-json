@@ -30,9 +30,10 @@ var helpers = {
       contextIsArray = true;
     } else {
       if (arguments.length === 3) {
+        // If given two numbers then pick a random one between the two
         count = randomInt(min, max);
       } else if (arguments.length === 2) {
-        // The helper can be given just one number for a fixed repeat count
+        // If given one number then just use it as a fixed repeat count
         options = max;
         count = min;
       }
@@ -40,7 +41,7 @@ var helpers = {
 
     var ret = '';
     for (var i = 0; i < count; i++) {
-      // index and count are passed as a private variable so they don't pollute
+      // index and count are passed as private variables so they don't pollute
       // the context scope
       ret += options.fn(
         contextIsArray ? context[i] : context,
