@@ -13,7 +13,7 @@ var usedPersonAttrs = [];
 
 var checkPersonIndex = function(type) {
   if (usedPersonAttrs.indexOf(type) !== -1) {
-    personIndex++;
+    personIndex = (personIndex + 1) % 100; // Loop index
     usedPersonAttrs = [];
   }
   usedPersonAttrs.push(type);
