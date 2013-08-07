@@ -4,7 +4,20 @@ var firstNames = ['Leanne','Edward','Haydee','Lyle','Shea','Curtis','Roselyn','M
 var lastNames = ['Flinn','Young','Milligan','Keesee','Mercer','Chapman','Zobel','Carter','Pettey','Starck','Raymond','Pullman','Drolet','Higgins','Matzen','Tindel','Winter','Charley','Schaefer','Hancock','Dampier','Garling','Verde','Lenihan','Rhymer','Pleiman','Dunham','Seabury','Goudy','Latshaw','Whitson','Cumbie','Webster','Bourquin','Connor','Rikard','Brier','Luck','Porras','Gilmore','Turner','Sprowl','Rohloff','Magby','Wallis','Mullens','Correa','Murphy','Bryd','Gamble','Castleman','Pace','Durrett','Bourne','Hottle','Oldman','Paquette','Stine','Muldoon','Smit','Finn','Kilmer','Sager','White','Friedrich','Fennell','Miers','Carroll','Freeman','Hollis','Neal','Remus','Pickering','Woodrum','Bradbury','Caffey','Tuck','Jensen','Shelly','Hyder','Krumm','Hundt','Seal','Pendergast','Kelsey','Milling','Karst','Helland','Risley','Grieve','Paschall','Coolidge','Furlough','Brandt','Cadena','Rebelo','Leath','Backer','Bickers','Cappel'];
 var companies = ['Unilogic','Solexis','Dalserve','Terrasys','Pancast','Tomiatech','Kancom','Iridimax','Proline','Qualcore','Thermatek','VTGrafix','Sunopia','WestGate','Chromaton','Tecomix','Galcom','Zatheon','OmniTouch','Hivemind','MultiServ','Citisys','Polygan','Dynaroc','Storex','Britech','Thermolock','Cryptonica','LoopSys','ForeTrust','TrueXT','LexiconLabs','Bellgate','Dynalab','Logico','Terralabs','CoreMax','Polycore','Infracom','Coolinga','MultiLingua','Conixco','QuadNet','FortyFour','TurboSystems','Optiplex','Nitrocam','CoreXTS','PeerSys','FastMart','Westercom','Templatek','Cirpria','FastFreight','Baramax','Superwire','Celmax','Connic','Forecore','SmartSystems','Ulogica','Seelogic','DynaAir','OpenServ','Maxcast','SixtySix','Protheon','SkyCenta','Eluxa','GrafixMedia','VenStrategy','Keycast','Opticast','Cameratek','CorpTek','Sealine','Playtech','Anaplex','Hypervision','Xenosys','Hassifix','Infratouch','Airconix','StrategyLine','Helixicon','MediaDime','NitroSystems','Viewtopia','Cryosoft','DuoServe','Acousticom','Freecast','CoreRobotics','Quadtek','Haltheon','TrioSys','Amsquare','Sophis','Keysoft','Creatonix'];
 
+// We try to keep names, emails and companies in sync, so that when using them
+// together in a loop they all relate to each other. To do this we link them all
+// to an index which is incremented only when the same type of property is
+// accessed twice in a row.
 var personIndex = 0;
+var usedPersonAttrs = [];
+
+var checkPersonIndex = function(type) {
+  if (usedPersonAttrs.indexOf(type) !== -1) {
+    personIndex++;
+    usedPersonAttrs = [];
+  }
+  usedPersonAttrs.push(type);
+};
 
 var randomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -89,21 +102,25 @@ var helpers = {
   },
 
   firstName: function(options) {
-    return firstNames[personIndex++];
+    checkPersonIndex('firstName');
+    return firstNames[personIndex];
   },
 
   lastName: function(options) {
-    return lastNames[personIndex++];
+    checkPersonIndex('lastName');
+    return lastNames[personIndex];
   },
 
   company: function(options) {
-    return companies[personIndex++];
+    checkPersonIndex('company');
+    return companies[personIndex];
   },
 
   email: function(options) {
-    return firstNames[personIndex++].toLowerCase() +
-      '.' + lastNames[personIndex++].toLowerCase() +
-      '@' + companies[personIndex++].toLowerCase() + '.com';
+    checkPersonIndex('email');
+    return firstNames[personIndex].toLowerCase() +
+      '.' + lastNames[personIndex].toLowerCase() +
+      '@' + companies[personIndex].toLowerCase() + '.com';
   }
 };
 
