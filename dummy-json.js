@@ -94,17 +94,20 @@ var helpers = {
     }
 
     // Handlebars helpers don't accept numbers with decimal places as arguments
-    // so they must be passed as strings
-    min = parseFloat(min);
-    max = parseFloat(max);
+    // so floats must be passed as strings
+    var isFloat = false;
+    if (typeof min === 'string') {
+      isFloat = true;
+      min = parseFloat(min);
+      max = parseFloat(max);
+    }
 
-    // Return a random int or float depending on what the user passed in
-    if (min % 1 === 0) {
-      var n = randomInt(min, max);
-      // Integers can be optionally padded with leading zeros
-      return options.hash.pad ? zeroPad(n, max.toString().length) : n;
-    } else {
+    if (isFloat) {
       return randomFloat(min, max);
+    } else {
+      var n = randomInt(min, max);
+      // Integers can optionally be padded with leading zeros
+      return options.hash.pad ? zeroPad(n, max.toString().length) : n;
     }
   },
 
