@@ -34,6 +34,14 @@ var randomBoolean = function() {
   return Math.random() > 0.5;
 };
 
+var zeroPad = function(num, len) {
+  num = num + '';
+  while (num.length < len) {
+    num = '0' + num;
+  }
+  return num;
+}
+
 var uniqueIndex;
 
 var helpers = {
@@ -80,15 +88,24 @@ var helpers = {
   number: function(min, max, options) {
     // If only one number is provided then generate from 0 to that number
     if (arguments.length === 2) {
+      options = max;
       max = min;
       min = 0;
     }
+
     // Handlebars helpers don't accept numbers with decimal places as arguments
     // so they must be passed as strings
     min = parseFloat(min);
     max = parseFloat(max);
+
     // Return a random int or float depending on what the user passed in
-    return (min % 1 === 0) ? randomInt(min, max) : randomFloat(min, max);
+    if (min % 1 === 0) {
+      var n = randomInt(min, max);
+      // Integers can be optionally padded with leading zeros
+      return options.hash.pad ? zeroPad(n, max.toString().length) : n;
+    } else {
+      return randomFloat(min, max);
+    }
   },
 
   boolean: function(options) {
@@ -153,5 +170,6 @@ module.exports = {
   // Also export utility functions so everyone can use them
   randomInt: randomInt,
   randomFloat: randomFloat,
-  randomBoolean: randomBoolean
+  randomBoolean: randomBoolean,
+  zeroPad: zeroPad
 };
