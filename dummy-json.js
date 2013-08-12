@@ -163,6 +163,7 @@ module.exports = {
     // Reset indexes on each parse
     uniqueIndex = 0;
     personIndex = 0;
+    usedPersonAttrs = [];
 
     return Handlebars.compile(string)(options.data, {helpers: combinedHelpers});
   },
