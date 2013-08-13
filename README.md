@@ -10,57 +10,60 @@ For a complete list of helpers see the [available helpers](#available-helpers) s
 Template
 <pre>
 {
-  "globalID":{{uniqueIndex}},
   "people": [
-    {{#repeat 3}}
+    {{#repeat 2}}
     {
       "id": {{index}},
-      "name": "{{firstName}}",
-      "optedIn": {{boolean}},
-      "age": {{number 20 50}}
+      "firstName": "{{firstName}}",
+      "lastName": "{{lastName}}",
+      "email": "{{email}}",
+      "work": "{{company}}",
+      "age": {{number 20 50}},
+      "optedin": {{boolean}}
     }
     {{/repeat}}
   ],
-  "position": {{number '1.5' '4.5'}},
-  "tags": [
+  "images": [
     {{#repeat 3 6}}
-    "tag-{{index}}-{{uniqueIndex}}"
+    'img{{index}}.png'
     {{/repeat}}
-  ]
+  ],
+  "revision": {{uniqueIndex}},
+  "tolerance": {{number '0' '2'}},
 }
 </pre>
 </td><td>
 Output
 <pre>
 {
-  "globalID":0,
-  "noise": "moo",
   "people": [
     {
       "id": 0,
-      "name": "bob0",
-      "optedIn": false,
-      "age": 46
+      "firstName": "Leanne",
+      "lastName": "Flinn",
+      "email": "leanne.flinn@unilogic.com",
+      "work": "Unilogic",
+      "age": 26,
+      "optedin": true
     },
     {
       "id": 1,
-      "name": "bob1",
-      "optedIn": true,
-      "age": 25
-    },
-    {
-      "id": 2,
-      "name": "bob2",
-      "optedIn": false,
-      "age": 50
+      "firstName": "Edward",
+      "lastName": "Young",
+      "email": "edward.young@solexis.com",
+      "work": "Solexis",
+      "age": 31,
+      "optedin": false
     }
   ],
-  "position": 1.5250442584510893,
-  "tags": [
-    "tag-0-2",
-    "tag-1-3",
-    "tag-2-4"
-  ]
+  "images": [
+    'img0.png',
+    'img1.png',
+    'img2.png',
+    'img3.png'
+  ],
+  "revision": 0,
+  "tolerance": 1.7508240924216807,
 }
 </pre>
 </td></tr></table>
