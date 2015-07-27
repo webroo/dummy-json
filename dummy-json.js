@@ -166,7 +166,7 @@ module.exports = {
     Handlebars.Utils.extend(combinedHelpers, helpers);
     Handlebars.Utils.extend(combinedHelpers, options.helpers);
 
-    // Registering custom partials if present
+    // Registering partials
     Handlebars.registerPartial(partials);
 
     // Reset indexes on each parse
