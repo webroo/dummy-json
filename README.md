@@ -251,7 +251,7 @@ var partials = {
 };
 
 var template = {
-  "peoples": [
+  "people": [
     {{#repeat 3}}
       {{> person }}
     {{/repeat}}
