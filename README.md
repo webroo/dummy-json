@@ -231,3 +231,31 @@ var result = dummyjson.parse(template, {
 ```
 
 Using your own names and companies will completely override the built-in collections. You can specify just one array, or all of them, as has been done above. **Note:** Names and companies loop when used repeatedly - to keep them in sync the length of the *smallest* array will be used as the loop point. In the example above the `companies` array is smallest and so the final first and last names won't ever appear.
+
+### Using your own partials
+It's even possible to separate your entities/resources in small pieces of code to promote reuse and encapsulation.
+```js
+
+var personTmpl = {
+  "id": {{index}},
+  "firstName": "{{firstName}}",
+  "lastName": "{{lastName}}",
+  "email": "{{email}}",
+  "work": "{{company}}",  
+  "age": {{number 20 50}},
+  "optedin": {{boolean}}
+};
+
+var partials = {
+  person: personTmpl  
+};
+
+var template = {
+  "people": [
+    {{#repeat 3}}
+      {{> person }}
+    {{/repeat}}
+  ]
+};
+
+var result = dummyjson.parse(template, {partials: partials});
