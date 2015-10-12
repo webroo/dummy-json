@@ -186,6 +186,37 @@ Generates a random email address, using the most recently printed name and compa
 
 Generates a unique index that always increments by 1 each time it's used, regardless of whether it's inside or outside a repeat loop.
 
+#### `{{date [min] [max]}}`
+
+Generates a random date between the two given values using the format YYYY-MM-DD. If no date is given it will generate a random one between 1900-01-01 and 1999-12-31.
+
+```js
+{{date}} // Generates a random date between 1900-01-01 and 1999-12-31
+{{date '2014-01-01' '2014-02-01'}} // Generates a random date between the two values
+```
+
+#### `{{time [min] [max]}}`
+
+Generates a random time between the two given values using the format hh:mm. If no time is given it will generate a random one between 00:00 and 23:59
+
+```js
+{{time}} // Generates a random time between 00:00 and 23:59
+{{time '09:00' '17:00'}} // Generates a random time between the two values
+```
+
+##### Custom date/time formatters
+
+The generated dates and times are passed through helper methods before finally being used. You can register custom formatters like so:
+
+```js
+Handlebars.registerHelper('dateFormatter', function(date) {
+  return date.getFullYear(); // Return your own formatted date here
+});
+Handlebars.registerHelper('timeFormatter', function(date) {
+  return date.getHours(); // Return your own formatted time here
+});
+```
+
 ## Advanced usage
 
 The `parse` method accepts a second argument that allows you to configure the parsing routine. It's a plain object that can contain one or more of the following options:
@@ -241,13 +272,13 @@ var personTmpl = {
   "firstName": "{{firstName}}",
   "lastName": "{{lastName}}",
   "email": "{{email}}",
-  "work": "{{company}}",  
+  "work": "{{company}}",
   "age": {{number 20 50}},
   "optedin": {{boolean}}
 };
 
 var partials = {
-  person: personTmpl  
+  person: personTmpl
 };
 
 var template = {

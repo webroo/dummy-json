@@ -1,6 +1,16 @@
 var os = require('os');
 var Handlebars = require('handlebars');
 
+Handlebars.registerHelper('dateFormatter', function(date) {
+  var isoString = date.toISOString();
+  return isoString.substring(0, isoString.indexOf('T'));
+});
+
+Handlebars.registerHelper('timeFormatter', function(date) {
+  var isoString = date.toISOString();
+  return isoString.substr(isoString.indexOf('T') + 1, 5);
+});
+
 var _firstNames = ['Leanne','Edward','Haydee','Lyle','Shea','Curtis','Roselyn','Marcus','Lyn','Lloyd','Isabelle','Francis','Olivia','Roman','Myong','Jamie','Alexis','Vernon','Chloe','Max','Kirstie','Tyler','Katelin','Alejandro','Hannah','Gavin','Lynetta','Russell','Neida','Kurt','Dannielle','Aiden','Janett','Vaughn','Michelle','Brian','Maisha','Theo','Emma','Cedric','Jocelyn','Darrell','Grace','Ivan','Rikki','Erik','Madeleine','Rufus','Florance','Raymond','Jenette','Danny','Kathy','Michael','Layla','Rolf','Selma','Anton','Rosie','Craig','Victoria','Andy','Lorelei','Drew','Yuri','Miles','Raisa','Rico','Rosanne','Cory','Dori','Travis','Joslyn','Austin','Haley','Ian','Liza','Rickey','Susana','Stephen','Richelle','Lance','Jetta','Heath','Juliana','Rene','Madelyn','Stan','Eleanore','Jason','Alexa','Adam','Jenna','Warren','Cecilia','Benito','Elaine','Mitch','Raylene','Cyrus'];
 var _lastNames = ['Flinn','Young','Milligan','Keesee','Mercer','Chapman','Zobel','Carter','Pettey','Starck','Raymond','Pullman','Drolet','Higgins','Matzen','Tindel','Winter','Charley','Schaefer','Hancock','Dampier','Garling','Verde','Lenihan','Rhymer','Pleiman','Dunham','Seabury','Goudy','Latshaw','Whitson','Cumbie','Webster','Bourquin','Connor','Rikard','Brier','Luck','Porras','Gilmore','Turner','Sprowl','Rohloff','Magby','Wallis','Mullens','Correa','Murphy','Bryd','Gamble','Castleman','Pace','Durrett','Bourne','Hottle','Oldman','Paquette','Stine','Muldoon','Smit','Finn','Kilmer','Sager','White','Friedrich','Fennell','Miers','Carroll','Freeman','Hollis','Neal','Remus','Pickering','Woodrum','Bradbury','Caffey','Tuck','Jensen','Shelly','Hyder','Krumm','Hundt','Seal','Pendergast','Kelsey','Milling','Karst','Helland','Risley','Grieve','Paschall','Coolidge','Furlough','Brandt','Cadena','Rebelo','Leath','Backer','Bickers','Cappel'];
 var _companies = ['Unilogic','Solexis','Dalserve','Terrasys','Pancast','Tomiatech','Kancom','Iridimax','Proline','Qualcore','Thermatek','VTGrafix','Sunopia','WestGate','Chromaton','Tecomix','Galcom','Zatheon','OmniTouch','Hivemind','MultiServ','Citisys','Polygan','Dynaroc','Storex','Britech','Thermolock','Cryptonica','LoopSys','ForeTrust','TrueXT','LexiconLabs','Bellgate','Dynalab','Logico','Terralabs','CoreMax','Polycore','Infracom','Coolinga','MultiLingua','Conixco','QuadNet','FortyFour','TurboSystems','Optiplex','Nitrocam','CoreXTS','PeerSys','FastMart','Westercom','Templatek','Cirpria','FastFreight','Baramax','Superwire','Celmax','Connic','Forecore','SmartSystems','Ulogica','Seelogic','DynaAir','OpenServ','Maxcast','SixtySix','Protheon','SkyCenta','Eluxa','GrafixMedia','VenStrategy','Keycast','Opticast','Cameratek','CorpTek','Sealine','Playtech','Anaplex','Hypervision','Xenosys','Hassifix','Infratouch','Airconix','StrategyLine','Helixicon','MediaDime','NitroSystems','Viewtopia','Cryosoft','DuoServe','Acousticom','Freecast','CoreRobotics','Quadtek','Haltheon','TrioSys','Amsquare','Sophis','Keysoft','Creatonix'];
@@ -149,6 +159,32 @@ var helpers = {
     return firstNames[personIndex].toLowerCase() +
       '.' + lastNames[personIndex].toLowerCase() +
       '@' + companies[personIndex].toLowerCase() + '.com';
+  },
+
+  date: function (start, end, options) {
+    // If dates are provided then use them, otherwise fall back to defaults
+    if (arguments.length === 3) {
+      start = new Date(start).getTime();
+      end = new Date(end).getTime();
+    } else {
+      start = new Date('1900-01-01').getTime();
+      end = new Date('1999-12-31').getTime();
+    }
+    var newDate = new Date(start + Math.random() * (end - start));
+    return Handlebars.helpers.dateFormatter(newDate);
+  },
+
+  time: function (start, end, options) {
+    // If times are provided then use them, otherwise fall back to defaults
+    if (arguments.length === 3) {
+      start = new Date('2000T' + start).getTime();
+      end = new Date('2000T' + end).getTime();
+    } else {
+      start = new Date('2000T00:00').getTime();
+      end = new Date('2000T23:59').getTime();
+    }
+    var newTime = new Date(start + Math.random() * (end - start));
+    return Handlebars.helpers.timeFormatter(newTime);
   }
 };
 
