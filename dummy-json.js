@@ -1,3 +1,4 @@
+var os = require('os');
 var Handlebars = require('handlebars');
 
 var _firstNames = ['Leanne','Edward','Haydee','Lyle','Shea','Curtis','Roselyn','Marcus','Lyn','Lloyd','Isabelle','Francis','Olivia','Roman','Myong','Jamie','Alexis','Vernon','Chloe','Max','Kirstie','Tyler','Katelin','Alejandro','Hannah','Gavin','Lynetta','Russell','Neida','Kurt','Dannielle','Aiden','Janett','Vaughn','Michelle','Brian','Maisha','Theo','Emma','Cedric','Jocelyn','Darrell','Grace','Ivan','Rikki','Erik','Madeleine','Rufus','Florance','Raymond','Jenette','Danny','Kathy','Michael','Layla','Rolf','Selma','Anton','Rosie','Craig','Victoria','Andy','Lorelei','Drew','Yuri','Miles','Raisa','Rico','Rosanne','Cory','Dori','Travis','Joslyn','Austin','Haley','Ian','Liza','Rickey','Susana','Stephen','Richelle','Lance','Jetta','Heath','Juliana','Rene','Madelyn','Stan','Eleanore','Jason','Alexa','Adam','Jenna','Warren','Cecilia','Benito','Elaine','Mitch','Raylene','Cyrus'];
@@ -77,9 +78,13 @@ var helpers = {
         contextIsArray ? context[i] : context,
         {data: {index: i, count: count}}
       );
+
       // Trim whitespace left by handlebars and add commas between items
-      ret = ret.trim();
-      if (i < count - 1) ret += ',';
+      ret = ret.trimRight();
+      if (i < count - 1) {
+        ret += ',';
+      }
+      ret += os.EOL;
     }
 
     return ret;
