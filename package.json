@@ -11,6 +11,10 @@
   },
   "main": "./dummy-json.js",
   "dependencies": {
-    "handlebars": "2.0.0"
+    "handlebars": "2.0.0",
+    "minimist": "1.2.0"
+  },
+  "bin": {
+    "dummy-json": "./dummy-json-cli.js"
   }
 }

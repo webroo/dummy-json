@@ -105,7 +105,7 @@ var obj = JSON.parse(result);
 
 #### Using with a HTTP response
 
-A common use of Dummy JSON is to create a mock API service that return random data you can test with. Here's a quick example using Express:
+A common use of Dummy JSON is to create a mock API service that returns random data. Here's a quick example using Express:
 
 ```js
 var fs = require('fs');
@@ -122,6 +122,12 @@ app.get('/people', function(req, res) {
 
 app.listen(3000);
 ```
+
+#### Command line iterface
+
+If you install the utility globally with `npm install -g dummy-json` you can use it from the command line to parse files:
+
+	dummy-json template.hbs > output.json
 
 ## Available helpers
 
@@ -265,8 +271,8 @@ Using your own names and companies will completely override the built-in collect
 
 ### Using your own partials
 It's even possible to separate your entities/resources in small pieces of code to promote reuse and encapsulation.
-```js
 
+```js
 var personTmpl = {
   "id": {{index}},
   "firstName": "{{firstName}}",
@@ -290,3 +296,4 @@ var template = {
 };
 
 var result = dummyjson.parse(template, {partials: partials});
+```
