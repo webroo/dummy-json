@@ -197,7 +197,9 @@ module.exports = {
     companies = options.companies || _companies;
 
     // Adding custom partials
-    partials = options.partials;
+    if (options.partials) {
+      Handlebars.registerPartial(options.partials);
+    }
 
     // In order to sync the people data we must loop over the smallest array
     maxPersonIndex = Math.min(firstNames.length, lastNames.length, companies.length);
@@ -206,9 +208,6 @@ module.exports = {
     var combinedHelpers = {};
     Handlebars.Utils.extend(combinedHelpers, helpers);
     Handlebars.Utils.extend(combinedHelpers, options.helpers);
-
-    // Registering partials
-    Handlebars.registerPartial(partials);
 
     // Reset indexes on each parse
     uniqueIndex = 0;
