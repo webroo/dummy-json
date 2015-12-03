@@ -2,6 +2,28 @@ var os = require('os');
 var Handlebars = require('handlebars');
 var dummyUtils = require('./dummy-utils');
 
+var uniqueIndex = 0;
+
+// Keep track of the last generated names and company, for use in email
+var lastUsedFirstName;
+var lastUsedLastName;
+var lastUsedCompany;
+
+function getFirstName (firstNames) {
+  lastUsedFirstName = firstNames[dummyUtils.randomInt(0, firstNames.length - 1)];
+  return lastUsedFirstName;
+}
+
+function getLastName (lastNames) {
+  lastUsedLastName = lastNames[dummyUtils.randomInt(0, lastNames.length - 1)];
+  return lastUsedLastName;
+}
+
+function getCompany (companies) {
+  lastUsedCompany = companies[dummyUtils.randomInt(0, companies.length - 1)];
+  return lastUsedCompany;
+}
+
 Handlebars.registerHelper('dateFormatter', function (date) {
   var isoString = date.toISOString();
   return isoString.substring(0, isoString.indexOf('T'));
@@ -11,33 +33,6 @@ Handlebars.registerHelper('timeFormatter', function (date) {
   var isoString = date.toISOString();
   return isoString.substr(isoString.indexOf('T') + 1, 5);
 });
-
-// Used to keep a reference to the current people arrays when parsing
-var maxPersonIndex;
-
-// We try to keep names, emails and companies in sync, so that when using them
-// together in a loop they all relate to each other. To do this we link them all
-// to an index which is incremented only when the same type of property is
-// accessed twice in a row.
-var personIndex = 0;
-var usedPersonAttrs = [];
-
-var checkPersonIndex = function (type, rootData) {
-  // In order to sync the people data we must loop over the smallest array
-  maxPersonIndex = Math.min(
-    rootData.firstNames.length,
-    rootData.lastNames.length,
-    rootData.companies.length
-  );
-
-  if (usedPersonAttrs.indexOf(type) !== -1) {
-    personIndex = (personIndex + 1) % maxPersonIndex; // Loop index
-    usedPersonAttrs = [];
-  }
-  usedPersonAttrs.push(type);
-};
-
-var uniqueIndex = 0;
 
 var helpers = {
   repeat: function (min, max, options) {
@@ -117,25 +112,26 @@ var helpers = {
   },
 
   firstName: function (options) {
-    checkPersonIndex('firstName', options.data.root);
-    return options.data.root.firstNames[personIndex];
+    return getFirstName(options.data.root.firstNames);
   },
 
   lastName: function (options) {
-    checkPersonIndex('lastName', options.data.root);
-    return options.data.root.lastNames[personIndex];
+    return getLastName(options.data.root.lastNames);
   },
 
   company: function (options) {
-    checkPersonIndex('company', options.data.root);
-    return options.data.root.companies[personIndex];
+    return getCompany(options.data.root.companies);
   },
 
   email: function (options) {
-    checkPersonIndex('email', options.data.root);
-    return options.data.root.firstNames[personIndex].toLowerCase() +
-      '.' + options.data.root.lastNames[personIndex].toLowerCase() +
-      '@' + options.data.root.companies[personIndex].toLowerCase() + '.com';
+    // Use the last generated names and company, or generate new ones
+    var firstName = lastUsedFirstName || getFirstName(options.data.root.firstNames);
+    var lastName = lastUsedLastName || getLastName(options.data.root.lastNames);
+    var company = lastUsedCompany || getCompany(options.data.root.companies);
+    return firstName.toLowerCase() +
+      '.' + lastName.toLowerCase() +
+      '@' + company.toLowerCase() +
+      '.com';
   },
 
   date: function (start, end, options) {
