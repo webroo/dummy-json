@@ -1,5 +1,6 @@
 var os = require('os');
 var Handlebars = require('handlebars');
+var dummyUtils = require('./dummy-utils');
 
 Handlebars.registerHelper('dateFormatter', function (date) {
   var isoString = date.toISOString();
@@ -36,26 +37,6 @@ var checkPersonIndex = function (type, rootData) {
   usedPersonAttrs.push(type);
 };
 
-var randomInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-var randomFloat = function (min, max) {
-  return Math.random() * (max - min) + min;
-};
-
-var randomBoolean = function () {
-  return Math.random() > 0.5;
-};
-
-var zeroPad = function (num, len) {
-  num = num + '';
-  while (num.length < len) {
-    num = '0' + num;
-  }
-  return num;
-};
-
 var uniqueIndex = 0;
 
 var helpers = {
@@ -68,7 +49,7 @@ var helpers = {
 
     if (arguments.length === 3) {
       // If given two numbers then pick a random one between the two
-      count = randomInt(min, max);
+      count = dummyUtils.randomInt(min, max);
     } else if (arguments.length === 2) {
       // If given one number then just use it as a fixed repeat count
       options = max;
@@ -119,16 +100,16 @@ var helpers = {
     }
 
     if (isFloat) {
-      return randomFloat(min, max);
+      return dummyUtils.randomFloat(min, max);
     } else {
-      var n = randomInt(min, max);
+      var n = dummyUtils.randomInt(min, max);
       // Integers can optionally be padded with leading zeros
-      return options.hash.pad ? zeroPad(n, max.toString().length) : n;
+      return options.hash.pad ? dummyUtils.zeroPad(n, max.toString().length) : n;
     }
   },
 
   boolean: function (options) {
-    return randomBoolean().toString();
+    return dummyUtils.randomBoolean().toString();
   },
 
   uniqueIndex: function (options) {

@@ -1,7 +1,7 @@
 var Handlebars = require('handlebars');
-var asdf = require('handlebars/lib/precompiler');
-var dummyHelpers = require('./dummy-helpers');
 var dummyData = require('./dummy-data');
+var dummyHelpers = require('./dummy-helpers');
+var dummyUtils = require('./dummy-utils');
 
 module.exports = {
   parse: function (string, options) {
@@ -13,5 +13,9 @@ module.exports = {
     options.helpers = Handlebars.Utils.extend(dummyHelpers, options.helpers);
 
     return Handlebars.compile(string)(options.data, {helpers: options.helpers});
-  }
+  },
+
+  data: dummyData,
+  helpers: dummyHelpers,
+  utils: dummyUtils
 };
