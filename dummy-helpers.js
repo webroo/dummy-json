@@ -22,16 +22,6 @@ function getCompany (companies) {
   return lastUsedCompany;
 }
 
-Handlebars.registerHelper('dateFormatter', function (date) {
-  var isoString = date.toISOString();
-  return isoString.substring(0, isoString.indexOf('T'));
-});
-
-Handlebars.registerHelper('timeFormatter', function (date) {
-  var isoString = date.toISOString();
-  return isoString.substr(isoString.indexOf('T') + 1, 5);
-});
-
 var helpers = {
   repeat: function (min, max, options) {
     // This is a lightweight copy of the built-in #each method
@@ -137,8 +127,7 @@ var helpers = {
       start = new Date('1900-01-01').getTime();
       end = new Date('1999-12-31').getTime();
     }
-    var newDate = new Date(start + Math.random() * (end - start));
-    return Handlebars.helpers.dateFormatter(newDate);
+    return new Date(start + Math.random() * (end - start));
   },
 
   time: function (start, end, options) {
@@ -150,8 +139,15 @@ var helpers = {
       start = new Date('2000T00:00').getTime();
       end = new Date('2000T23:59').getTime();
     }
-    var newTime = new Date(start + Math.random() * (end - start));
-    return Handlebars.helpers.timeFormatter(newTime);
+    return new Date(start + Math.random() * (end - start));
+  },
+
+  dateFormatter: function (date) {
+    return date.toDateString();
+  },
+
+  timeFormatter: function (date) {
+    return date.toTimeString();
   }
 };
 
