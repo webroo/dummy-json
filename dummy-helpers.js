@@ -2,8 +2,6 @@ var os = require('os');
 var Handlebars = require('handlebars');
 var dummyUtils = require('./dummy-utils');
 
-var uniqueIndex = 0;
-
 // Keep track of the last generated names and company, for use in email
 var lastUsedFirstName;
 var lastUsedLastName;
@@ -105,10 +103,6 @@ var helpers = {
 
   boolean: function (options) {
     return dummyUtils.randomBoolean().toString();
-  },
-
-  uniqueIndex: function (options) {
-    return uniqueIndex++;
   },
 
   firstName: function (options) {
