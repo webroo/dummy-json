@@ -145,6 +145,12 @@ var helpers = {
     var firstName = lastUsedFirstName || getFirstName(options.data.root.firstNames);
     var lastName = lastUsedLastName || getLastName(options.data.root.lastNames);
     var company = lastUsedCompany || getCompany(options.data.root.companies);
+
+    // Clear the stored names and company so new ones are generated if this helper is called again
+    lastUsedFirstName = null;
+    lastUsedLastName = null;
+    lastUsedCompany = null;
+
     return firstName.toLowerCase() +
       '.' + lastName.toLowerCase() +
       '@' + company.toLowerCase() +
