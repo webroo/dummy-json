@@ -22,6 +22,10 @@ function getCompany (companies) {
   return lastUsedCompany;
 }
 
+function getTld (tlds) {
+  return tlds[dummyUtils.randomInt(0, tlds.length - 1)];
+}
+
 var helpers = {
   repeat: function (min, max, options) {
     // This is a lightweight copy of the built-in #each method
@@ -140,6 +144,10 @@ var helpers = {
     return getCompany(options.data.root.companies);
   },
 
+  tld: function (options) {
+    return getTld(options.data.root.tlds);
+  },
+
   email: function (options) {
     // Use the last generated names and company, or generate new ones
     var firstName = lastUsedFirstName || getFirstName(options.data.root.firstNames);
@@ -154,7 +162,7 @@ var helpers = {
     return firstName.toLowerCase() +
       '.' + lastName.toLowerCase() +
       '@' + company.toLowerCase() +
-      '.com';
+      '.' + getTld(options.data.root.tlds);
   },
 
   date: function (start, end, options) {

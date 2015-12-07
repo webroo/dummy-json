@@ -42,8 +42,13 @@ var companies = [
   'Quadtek', 'Haltheon', 'TrioSys', 'Amsquare', 'Sophis', 'Keysoft', 'Creatonix'
 ];
 
+var tlds = [
+  'com', 'org', 'net', 'info', 'edu', 'gov', 'co', 'biz', 'name', 'me', 'mobi', 'club', 'xyz', 'eu'
+];
+
 module.exports = {
   firstNames: firstNames,
   lastNames: lastNames,
-  companies: companies
+  companies: companies,
+  tlds: tlds
 };
