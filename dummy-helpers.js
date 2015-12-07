@@ -7,25 +7,6 @@ var lastUsedFirstName;
 var lastUsedLastName;
 var lastUsedCompany;
 
-function getFirstName (firstNames) {
-  lastUsedFirstName = firstNames[dummyUtils.randomInt(0, firstNames.length - 1)];
-  return lastUsedFirstName;
-}
-
-function getLastName (lastNames) {
-  lastUsedLastName = lastNames[dummyUtils.randomInt(0, lastNames.length - 1)];
-  return lastUsedLastName;
-}
-
-function getCompany (companies) {
-  lastUsedCompany = companies[dummyUtils.randomInt(0, companies.length - 1)];
-  return lastUsedCompany;
-}
-
-function getTld (tlds) {
-  return tlds[dummyUtils.randomInt(0, tlds.length - 1)];
-}
-
 var helpers = {
   repeat: function (min, max, options) {
     // This is a lightweight copy of the built-in #each method
@@ -133,26 +114,32 @@ var helpers = {
   },
 
   firstName: function (options) {
-    return getFirstName(options.data.root.firstNames);
+    // Cache the last used value so it can be used in the email helper
+    lastUsedFirstName = options.data.root.firstNames[dummyUtils.randomInt(0, options.data.root.firstNames.length - 1)];
+    return lastUsedFirstName;
   },
 
   lastName: function (options) {
-    return getLastName(options.data.root.lastNames);
+    // Cache the last used value so it can be used in the email helper
+    lastUsedLastName = options.data.root.lastNames[dummyUtils.randomInt(0, options.data.root.lastNames.length - 1)];
+    return lastUsedLastName;
   },
 
   company: function (options) {
-    return getCompany(options.data.root.companies);
+    // Cache the last used value so it can be used in the email helper
+    lastUsedCompany = options.data.root.companies[dummyUtils.randomInt(0, options.data.root.companies.length - 1)];
+    return lastUsedCompany;
   },
 
   tld: function (options) {
-    return getTld(options.data.root.tlds);
+    return options.data.root.tlds[dummyUtils.randomInt(0, options.data.root.tlds.length - 1)];
   },
 
   email: function (options) {
     // Use the last generated names and company, or generate new ones
-    var firstName = lastUsedFirstName || getFirstName(options.data.root.firstNames);
-    var lastName = lastUsedLastName || getLastName(options.data.root.lastNames);
-    var company = lastUsedCompany || getCompany(options.data.root.companies);
+    var firstName = lastUsedFirstName || helpers.firstName(options);
+    var lastName = lastUsedLastName || helpers.lastName(options);
+    var company = lastUsedCompany || helpers.company(options);
 
     // Clear the stored names and company so new ones are generated if this helper is called again
     lastUsedFirstName = null;
@@ -162,7 +149,7 @@ var helpers = {
     return firstName.toLowerCase() +
       '.' + lastName.toLowerCase() +
       '@' + company.toLowerCase() +
-      '.' + getTld(options.data.root.tlds);
+      '.' + helpers.tld(options);
   },
 
   date: function (start, end, options) {
