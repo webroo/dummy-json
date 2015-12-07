@@ -8,7 +8,7 @@ module.exports = {
   },
 
   randomBoolean: function () {
-    return Math.random() > 0.5;
+    return Math.random() < 0.5;
   },
 
   zeroPad: function (num, len) {
@@ -17,5 +17,9 @@ module.exports = {
       num = '0' + num;
     }
     return num;
+  },
+
+  nearestMultiple: function (num, multiple) {
+    return Math.round(num / multiple) * multiple;
   }
 };

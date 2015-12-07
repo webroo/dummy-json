@@ -38,7 +38,7 @@ var helpers = {
       options = max;
       count = min;
     } else {
-      throw new Error('Must pass a number to #repeat');
+      throw new Error('The repeat helper requires an integer value');
     }
 
     // Create a shallow copy of data so we can add variables without modifying the original
@@ -65,30 +65,63 @@ var helpers = {
     return ret;
   },
 
-  number: function (min, max, options) {
-    // If only one number is provided then generate from 0 to that number
-    if (arguments.length === 2) {
+  int: function (min, max, options) {
+    var ret;
+
+    if (arguments.length >= 4) {
+      throw new Error('The int helper only accepts a maximum of 2 values');
+    } else if (arguments.length === 2) {
+      // If only one number is provided then generate from 0 to that number
       options = max;
       max = min;
       min = 0;
+    } else if (arguments.length === 1) {
+      // If no numbers are sent through then use some default values
+      options = min;
+      min = 0;
+      max = 9007199254740991; // Number.MAX_SAFE_INTEGER as defined in ES6
     }
 
-    // Handlebars helpers don't accept numbers with decimal places as arguments
-    // so floats must be passed as strings
-    var isFloat = false;
-    if (typeof min === 'string') {
-      isFloat = true;
-      min = parseFloat(min);
-      max = parseFloat(max);
+    ret = dummyUtils.randomInt(min, max);
+
+    // Integers can be rounded to the nearest multiple
+    if (typeof options.hash.round === 'number') {
+      ret = dummyUtils.nearestMultiple(ret, options.hash.round);
     }
 
-    if (isFloat) {
-      return dummyUtils.randomFloat(min, max);
-    } else {
-      var n = dummyUtils.randomInt(min, max);
-      // Integers can optionally be padded with leading zeros
-      return options.hash.pad ? dummyUtils.zeroPad(n, max.toString().length) : n;
+    // Integers can be padded with leading zeros
+    if (options.hash.zeropad === true) {
+      ret = dummyUtils.zeroPad(ret, max.toString().length);
     }
+
+    return ret;
+  },
+
+  float: function (min, max, options) {
+    var ret;
+
+    if (arguments.length >= 4) {
+      throw new Error('The float helper only accepts a maximum of 2 values');
+    } else if (arguments.length === 2) {
+      // If only one number is provided then generate from 0 to that number
+      options = max;
+      max = min;
+      min = 0;
+    } else if (arguments.length === 1) {
+      // If no numbers are sent through then use some default values
+      options = min;
+      min = 0;
+      max = 1;
+    }
+
+    ret = dummyUtils.randomFloat(min, max);
+
+    // Floats can be rounded to decimal places
+    if (typeof options.hash.decimals === 'number') {
+      ret = ret.toFixed(options.hash.decimals);
+    }
+
+    return ret;
   },
 
   boolean: function (options) {
