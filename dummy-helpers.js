@@ -1,11 +1,67 @@
 var os = require('os');
 var Handlebars = require('handlebars');
+var numbro = require('numbro');
+var fecha = require('fecha');
 var dummyUtils = require('./dummy-utils');
 
 // Keep track of the last generated names and company, for use in email
 var lastUsedFirstName;
 var lastUsedLastName;
 var lastUsedCompany;
+
+function numberHelper (type, min, max, format, options) {
+  var ret;
+
+  // Juggle the arguments if the user didn't supply a format string
+  if (!options) {
+    options = format;
+    format = null;
+  }
+
+  if (type === 'int') {
+    ret = dummyUtils.randomInt(min, max);
+  } else if (type === 'float') {
+    ret = dummyUtils.randomFloat(min, max);
+  }
+
+  if (typeof options.hash.round === 'number') {
+    ret = dummyUtils.nearestMultiple(ret, options.hash.round);
+  }
+
+  if (format) {
+    ret = numbro(ret).format(format);
+  }
+
+  return ret;
+}
+
+function dateHelper (type, min, max, format, options) {
+  var ret;
+
+  // Juggle the arguments if the user didn't supply a format string
+  if (!options) {
+    options = format;
+    format = null;
+  }
+
+  if (type === 'date') {
+    min = Date.parse(min);
+    max = Date.parse(max);
+  } else if (type === 'time') {
+    min = Date.parse('1970-01-01T' + min);
+    max = Date.parse('1970-01-01T' + max);
+  }
+
+  ret = dummyUtils.randomDate(min, max);
+
+  if (format === 'unix') {
+    ret = Math.floor(ret.getTime() / 1000);
+  } else if (format) {
+    ret = fecha.format(ret, format);
+  }
+
+  return ret;
+}
 
 var helpers = {
   repeat: function (min, max, options) {
@@ -23,7 +79,7 @@ var helpers = {
       options = max;
       count = min;
     } else {
-      throw new Error('The repeat helper requires an integer value');
+      throw new Error('The repeat helper requires a numeric param');
     }
 
     // Create a shallow copy of data so we can add variables without modifying the original
@@ -50,63 +106,20 @@ var helpers = {
     return ret;
   },
 
-  int: function (min, max, options) {
-    var ret;
-
-    if (arguments.length >= 4) {
-      throw new Error('The int helper only accepts a maximum of 2 values');
-    } else if (arguments.length === 2) {
-      // If only one number is provided then generate from 0 to that number
-      options = max;
-      max = min;
-      min = 0;
-    } else if (arguments.length === 1) {
-      // If no numbers are sent through then use some default values
-      options = min;
-      min = 0;
-      max = 9007199254740991; // Number.MAX_SAFE_INTEGER as defined in ES6
+  int: function (min, max, format, options) {
+    if (arguments.length !== 3 && arguments.length !== 4) {
+      throw new Error('The int helper requires two numeric params');
     }
 
-    ret = dummyUtils.randomInt(min, max);
-
-    // Integers can be rounded to the nearest multiple
-    if (typeof options.hash.round === 'number') {
-      ret = dummyUtils.nearestMultiple(ret, options.hash.round);
-    }
-
-    // Integers can be padded with leading zeros
-    if (options.hash.zeropad === true) {
-      ret = dummyUtils.zeroPad(ret, max.toString().length);
-    }
-
-    return ret;
+    return numberHelper('int', min, max, format, options);
   },
 
-  float: function (min, max, options) {
-    var ret;
-
-    if (arguments.length >= 4) {
-      throw new Error('The float helper only accepts a maximum of 2 values');
-    } else if (arguments.length === 2) {
-      // If only one number is provided then generate from 0 to that number
-      options = max;
-      max = min;
-      min = 0;
-    } else if (arguments.length === 1) {
-      // If no numbers are sent through then use some default values
-      options = min;
-      min = 0;
-      max = 1;
+  float: function (min, max, format, options) {
+    if (arguments.length !== 3 && arguments.length !== 4) {
+      throw new Error('The float helper requires two numeric params');
     }
 
-    ret = dummyUtils.randomFloat(min, max);
-
-    // Floats can be rounded to decimal places
-    if (typeof options.hash.decimals === 'number') {
-      ret = ret.toFixed(options.hash.decimals);
-    }
-
-    return ret;
+    return numberHelper('float', min, max, format, options);
   },
 
   boolean: function (options) {
@@ -152,36 +165,20 @@ var helpers = {
       '.' + helpers.tld(options);
   },
 
-  date: function (start, end, options) {
-    // If dates are provided then use them, otherwise fall back to defaults
-    if (arguments.length === 3) {
-      start = new Date(start).getTime();
-      end = new Date(end).getTime();
-    } else {
-      start = new Date('1900-01-01').getTime();
-      end = new Date('1999-12-31').getTime();
+  date: function (min, max, format, options) {
+    if (arguments.length !== 3 && arguments.length !== 4) {
+      throw new Error('The date helper requires two string params');
     }
-    return new Date(start + Math.random() * (end - start));
+
+    return dateHelper('date', min, max, format, options);
   },
 
-  time: function (start, end, options) {
-    // If times are provided then use them, otherwise fall back to defaults
-    if (arguments.length === 3) {
-      start = new Date('2000T' + start).getTime();
-      end = new Date('2000T' + end).getTime();
-    } else {
-      start = new Date('2000T00:00').getTime();
-      end = new Date('2000T23:59').getTime();
+  time: function (min, max, format, options) {
+    if (arguments.length !== 3 && arguments.length !== 4) {
+      throw new Error('The time helper requires two string params');
     }
-    return new Date(start + Math.random() * (end - start));
-  },
 
-  dateFormatter: function (date) {
-    return date.toDateString();
-  },
-
-  timeFormatter: function (date) {
-    return date.toTimeString();
+    return dateHelper('time', min, max, format, options);
   }
 };
 

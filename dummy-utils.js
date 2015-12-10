@@ -11,15 +11,11 @@ module.exports = {
     return Math.random() < 0.5;
   },
 
-  zeroPad: function (num, len) {
-    num = num + '';
-    while (num.length < len) {
-      num = '0' + num;
-    }
-    return num;
+  randomDate: function (min, max) {
+    return new Date(Math.floor(Math.random() * (max - min)) + min);
   },
 
-  nearestMultiple: function (num, multiple) {
-    return Math.round(num / multiple) * multiple;
+  nearestMultiple: function (value, multiple) {
+    return Math.round(value / multiple) * multiple;
   }
 };
