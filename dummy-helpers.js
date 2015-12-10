@@ -65,19 +65,18 @@ function dateHelper (type, min, max, format, options) {
 
 var helpers = {
   repeat: function (min, max, options) {
-    // This is a lightweight copy of the built-in #each method
     var ret = '';
-    var count = 0;
+    var total = 0;
     var data;
     var i;
 
     if (arguments.length === 3) {
       // If given two numbers then pick a random one between the two
-      count = dummyUtils.randomInt(min, max);
+      total = dummyUtils.randomInt(min, max);
     } else if (arguments.length === 2) {
-      // If given one number then just use it as a fixed repeat count
+      // If given one number then just use it as a fixed repeat total
       options = max;
-      count = min;
+      total = min;
     } else {
       throw new Error('The repeat helper requires a numeric param');
     }
@@ -85,19 +84,19 @@ var helpers = {
     // Create a shallow copy of data so we can add variables without modifying the original
     data = Handlebars.Utils.extend({}, options.data);
 
-    for (i = 0; i < count; i++) {
-      // You can access these in your template using @index, @count, etc
+    for (i = 0; i < total; i++) {
+      // You can access these in your template using @index, @total, @first, @last
       data.index = i;
-      data.count = count;
+      data.total = total;
       data.first = i === 0;
-      data.last = i === count - 1;
+      data.last = i === total - 1;
 
-      // By using 'this' as the context the repeat block won't create a new scope, just reuse it
+      // By using 'this' as the context the repeat block will inherit the current scope
       ret = ret + options.fn(this, {data: data});
 
-      // Trim whitespace left by handlebars and add commas between items
+      // Trim any whitespace left by handlebars and add a comma
       ret = ret.trimRight();
-      if (i < count - 1) {
+      if (i < total - 1) {
         ret += ',';
       }
       ret += os.EOL;
