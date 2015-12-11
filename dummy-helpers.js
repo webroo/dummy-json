@@ -5,6 +5,7 @@ var fecha = require('fecha');
 var dummyUtils = require('./dummy-utils');
 
 // Keep track of the last generated names and company, for use in email
+// TODO: Make the helpers stateless
 var lastUsedFirstName;
 var lastUsedLastName;
 var lastUsedCompany;

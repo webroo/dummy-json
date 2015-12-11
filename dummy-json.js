@@ -12,6 +12,8 @@ module.exports = {
     options.data = Handlebars.Utils.extend(dummyData, options.data);
     options.helpers = Handlebars.Utils.extend(dummyHelpers, options.helpers);
 
+    dummyUtils.setRandomSeed(options.seed || null);
+
     return Handlebars.compile(string)(options.data, {helpers: options.helpers});
   },
 
