@@ -4,13 +4,13 @@ var numbro = require('numbro');
 var fecha = require('fecha');
 var dummyUtils = require('./dummy-utils');
 
-// Keep track of the last generated names and company, for use in email
-// TODO: Make the helpers stateless
-var lastUsedFirstName;
-var lastUsedLastName;
-var lastUsedCompany;
+// Certain helpers, such as name and email, attempt to link-up and use the same values when
+// called after one-another. This object acts as a cache so the helpers can share their values.
+// TODO: By storing the cache we've made this module stateful, ideally it should be stateless,
+// or it should return a constructor so an instance can be created to retain the state.
+var linkedValuesCache = {};
 
-function numberHelper (type, min, max, format, options) {
+function getNumber (type, min, max, format, options) {
   var ret;
 
   // Juggle the arguments if the user didn't supply a format string
@@ -36,7 +36,7 @@ function numberHelper (type, min, max, format, options) {
   return ret;
 }
 
-function dateHelper (type, min, max, format, options) {
+function getDate (type, min, max, format, options) {
   var ret;
 
   // Juggle the arguments if the user didn't supply a format string
@@ -64,6 +64,33 @@ function dateHelper (type, min, max, format, options) {
   return ret;
 }
 
+function getFirstName (options) {
+  // The value is cached so that other helpers can use it
+  var first = dummyUtils.randomFromArray(options.data.root.firstNames);
+  linkedValuesCache.firstName = first;
+  linkedValuesCache.username_firstName = first;
+  linkedValuesCache.email_firstName = first;
+  return first;
+}
+
+function getLastName (options) {
+  // The value is cached so that other helpers can use it
+  var last = dummyUtils.randomFromArray(options.data.root.lastNames);
+  linkedValuesCache.lastName = last;
+  linkedValuesCache.username_lastName = last;
+  linkedValuesCache.email_lastName = last;
+  return last;
+}
+
+function getCompany (options) {
+  // The value is cached so that other helpers can use it
+  var company = dummyUtils.randomFromArray(options.data.root.companies);
+  linkedValuesCache.company = company;
+  linkedValuesCache.domain_company = company;
+  linkedValuesCache.email_company = company;
+  return company;
+}
+
 var helpers = {
   repeat: function (min, max, options) {
     var ret = '';
@@ -86,6 +113,9 @@ var helpers = {
     data = Handlebars.Utils.extend({}, options.data);
 
     for (i = 0; i < total; i++) {
+      // Clear the linked values on each iteration so a new set of names/companies is generated
+      linkedValuesCache = {};
+
       // You can access these in your template using @index, @total, @first, @last
       data.index = i;
       data.total = total;
@@ -110,75 +140,91 @@ var helpers = {
     if (arguments.length !== 3 && arguments.length !== 4) {
       throw new Error('The int helper requires two numeric params');
     }
-
-    return numberHelper('int', min, max, format, options);
+    return getNumber('int', min, max, format, options);
   },
 
   float: function (min, max, format, options) {
     if (arguments.length !== 3 && arguments.length !== 4) {
       throw new Error('The float helper requires two numeric params');
     }
-
-    return numberHelper('float', min, max, format, options);
+    return getNumber('float', min, max, format, options);
   },
 
   boolean: function (options) {
     return dummyUtils.randomBoolean().toString();
   },
 
-  firstName: function (options) {
-    // Cache the last used value so it can be used in the email helper
-    lastUsedFirstName = options.data.root.firstNames[dummyUtils.randomInt(0, options.data.root.firstNames.length - 1)];
-    return lastUsedFirstName;
-  },
-
-  lastName: function (options) {
-    // Cache the last used value so it can be used in the email helper
-    lastUsedLastName = options.data.root.lastNames[dummyUtils.randomInt(0, options.data.root.lastNames.length - 1)];
-    return lastUsedLastName;
-  },
-
-  company: function (options) {
-    // Cache the last used value so it can be used in the email helper
-    lastUsedCompany = options.data.root.companies[dummyUtils.randomInt(0, options.data.root.companies.length - 1)];
-    return lastUsedCompany;
-  },
-
-  tld: function (options) {
-    return options.data.root.tlds[dummyUtils.randomInt(0, options.data.root.tlds.length - 1)];
-  },
-
-  email: function (options) {
-    // Use the last generated names and company, or generate new ones
-    var firstName = lastUsedFirstName || helpers.firstName(options);
-    var lastName = lastUsedLastName || helpers.lastName(options);
-    var company = lastUsedCompany || helpers.company(options);
-
-    // Clear the stored names and company so new ones are generated if this helper is called again
-    lastUsedFirstName = null;
-    lastUsedLastName = null;
-    lastUsedCompany = null;
-
-    return firstName.toLowerCase() +
-      '.' + lastName.toLowerCase() +
-      '@' + company.toLowerCase() +
-      '.' + helpers.tld(options);
-  },
-
   date: function (min, max, format, options) {
     if (arguments.length !== 3 && arguments.length !== 4) {
       throw new Error('The date helper requires two string params');
     }
-
-    return dateHelper('date', min, max, format, options);
+    return getDate('date', min, max, format, options);
   },
 
   time: function (min, max, format, options) {
     if (arguments.length !== 3 && arguments.length !== 4) {
       throw new Error('The time helper requires two string params');
     }
+    return getDate('time', min, max, format, options);
+  },
 
-    return dateHelper('time', min, max, format, options);
+  firstName: function (options) {
+    // Try to use the cached values first, otherwise generate a new value. The cached values are
+    // then cleared so they can't be used again.
+    var first = linkedValuesCache.firstName || getFirstName(options);
+    linkedValuesCache.firstName = null;
+    return first;
+  },
+
+  lastName: function (options) {
+    // Try to use the cached values first, otherwise generate a new value. The cached values are
+    // then cleared so they can't be used again.
+    var last = linkedValuesCache.lastName || getLastName(options);
+    linkedValuesCache.lastName = null;
+    return last;
+  },
+
+  username: function (options) {
+    // Try to use the cached values first, otherwise generate a new value. The cached values are
+    // then cleared so they can't be used again.
+    var first = linkedValuesCache.username_firstName || getFirstName(options);
+    var last = linkedValuesCache.username_lastName || getLastName(options);
+    linkedValuesCache.username_firstName = null;
+    linkedValuesCache.username_lastName = null;
+    return first.substr(0, 1).toLowerCase() + last.toLowerCase();
+  },
+
+  company: function (options) {
+    // Try to use the cached values first, otherwise generate a new value. The cached values are
+    // then cleared so they can't be used again.
+    var company = linkedValuesCache.company || getCompany(options);
+    linkedValuesCache.company = null;
+    return company;
+  },
+
+  tld: function (options) {
+    return dummyUtils.randomFromArray(options.data.root.tlds);
+  },
+
+  domain: function (options) {
+    // Try to use the cached values first, otherwise generate a new value. The cached values are
+    // then cleared so they can't be used again.
+    var company = linkedValuesCache.domain_company || getCompany(options);
+    linkedValuesCache.domain_company = null;
+    return company.toLowerCase() + '.' + helpers.tld(options);
+  },
+
+  email: function (options) {
+    // Try to use the cached values first, otherwise generate a new value. The cached values are
+    // then cleared so they can't be used again.
+    var first = linkedValuesCache.email_firstName || getFirstName(options);
+    var last = linkedValuesCache.email_lastName || getLastName(options);
+    var company = linkedValuesCache.email_company || getCompany(options);
+    linkedValuesCache.email_firstName = null;
+    linkedValuesCache.email_lastName = null;
+    linkedValuesCache.email_company = null;
+    return first.toLowerCase() + '.' + last.toLowerCase() +
+      '@' + company.toLowerCase() + '.' + helpers.tld(options);
   }
 };
 

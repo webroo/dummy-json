@@ -1,7 +1,8 @@
 var seedrandom = require('seedrandom');
 
 // Create an instance of the prng without a seed (so it'll be a random sequence each time)
-// TODO: Make the utils stateless
+// TODO: By storing the prng instance we've made this module stateful, ideally it should be
+// stateless, or it should return a constructor so an instance can be created to retain state.
 var prng = seedrandom();
 
 var utils = {
@@ -27,6 +28,10 @@ var utils = {
 
   randomDate: function (min, max) {
     return new Date(Math.floor(utils.random() * (max - min)) + min);
+  },
+
+  randomFromArray: function (array) {
+    return array[utils.randomInt(0, array.length - 1)];
   },
 
   nearestMultiple: function (value, multiple) {
