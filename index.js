@@ -3,21 +3,25 @@ var mockdata = require('./lib/mockdata');
 var helpers = require('./lib/helpers');
 var utils = require('./lib/utils');
 
-module.exports = {
+var dummyjson = {
+  seed: null,
+
   parse: function (string, options) {
     options = options || {};
 
-    // Merge any data or helpers passed in the options into the built-in versions,
-    // passed-in options will override built-in ones
-    options.data = Handlebars.Utils.extend(mockdata, options.data);
-    options.helpers = Handlebars.Utils.extend(helpers, options.helpers);
+    // Merge custom mockdata/helpers into the defaults, items with the same name will override
+    options.mockdata = Handlebars.Utils.extend({}, mockdata, options.mockdata);
+    options.helpers = Handlebars.Utils.extend({}, helpers, options.helpers);
 
-    utils.setRandomSeed(options.seed || null);
+    // If a seed is passed in the options it will override the default one
+    utils.setRandomSeed(options.seed || dummyjson.seed);
 
-    return Handlebars.compile(string)(options.data, {helpers: options.helpers});
+    return Handlebars.compile(string)(options.mockdata, {helpers: options.helpers});
   },
 
-  data: mockdata,
+  mockdata: mockdata,
   helpers: helpers,
   utils: utils
 };
+
+module.exports = dummyjson;
