@@ -2,7 +2,7 @@
 
 var os = require('os');
 var fs = require('fs');
-var dummyjson = require('./dummy-json');
+var dummyjson = require('./index');
 
 var args = process.argv.slice(2);
 
