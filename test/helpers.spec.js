@@ -278,6 +278,14 @@ describe('helpers', function () {
     });
   });
 
+  describe('title', function () {
+    it('should return different titles when used repeatedly', function () {
+      var template = '{{title}}, {{title}}, {{title}}, {{title}}';
+      var expected = 'Prof, Prof, Mr, Lord';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('firstName', function () {
     it('should return different first names when used repeatedly', function () {
       var template = '{{firstName}}, {{firstName}}, {{firstName}}';
