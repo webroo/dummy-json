@@ -15,8 +15,14 @@
     "numbro": "^1.6.2",
     "seedrandom": "^2.4.2"
   },
+  "devDependencies": {
+    "mocha": "^2.3.4"
+  },
   "main": "index.js",
   "bin": {
     "dummyjson": "cli.js"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
