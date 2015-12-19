@@ -358,6 +358,22 @@ describe('helpers', function () {
     });
   });
 
+  describe('country', function () {
+    it('should return different countries when used repeatedly', function () {
+      var template = '{{country}}, {{country}}, {{country}}';
+      var expected = 'Iceland, Isle of Man, Burundi';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('countryCode', function () {
+    it('should return different country codes when used repeatedly', function () {
+      var template = '{{countryCode}}, {{countryCode}}, {{countryCode}}';
+      var expected = 'IS, IM, BI';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('linked helpers', function () {
     it('should link all values when names are used first', function () {
       var template = [
@@ -639,6 +655,34 @@ describe('helpers', function () {
       assertJSONOutput(template, expected);
     });
 
+    it('should link countries and country codes', function () {
+      var template = [
+        '{',
+        '  "country": "{{country}}",',
+        '  "countryCode": "{{countryCode}}",',
+        '  "country2": "{{country}}",',
+        '  "countryCode2": "{{countryCode}}",',
+        '  "country3": "{{country}}",',
+        '  "country4": "{{country}}",',
+        '  "countryCode4": "{{countryCode}}",',
+        '  "countryCode5": "{{countryCode}}",',
+        '  "country5": "{{country}}"',
+        '}'
+      ];
+      var expected = {
+        'country': 'Iceland',
+        'countryCode': 'IS',
+        'country2': 'Isle of Man',
+        'countryCode2': 'IM',
+        'country3': 'Burundi',
+        'country4': 'Northern Mariana Islands',
+        'countryCode4': 'MP',
+        'countryCode5': 'GW',
+        'country5': 'Guinea-Bissau'
+      };
+      assertJSONOutput(template, expected);
+    });
+
     it('should clear any linked values when starting a repeat block', function () {
       var template = [
         '{',
@@ -649,6 +693,12 @@ describe('helpers', function () {
         '  "emails": [',
         '    {{#repeat 2}}',
         '    "{{email}}"',
+        '    {{/repeat}}',
+        '  ],',
+        '  "country": "{{country}}",',
+        '  "countryCodes": [',
+        '    {{#repeat 2}}',
+        '    "{{countryCode}}"',
         '    {{/repeat}}',
         '  ]',
         '}'
@@ -661,6 +711,11 @@ describe('helpers', function () {
         'emails': [
           'theo.winter@citisys.biz',
           'florance.krumm@dalserve.biz'
+        ],
+        'country': 'Japan',
+        'countryCodes': [
+          'RO',
+          'LA'
         ]
       };
       assertJSONOutput(template, expected);
