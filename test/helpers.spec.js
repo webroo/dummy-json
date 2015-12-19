@@ -342,6 +342,22 @@ describe('helpers', function () {
     });
   });
 
+  describe('street', function () {
+    it('should return different streets when used repeatedly', function () {
+      var template = '{{street}}, {{street}}, {{street}}';
+      var expected = 'Banner Street, Green Street, Cottontail Road';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('city', function () {
+    it('should return different cities when used repeatedly', function () {
+      var template = '{{city}}, {{city}}, {{city}}';
+      var expected = 'Bristol, Spokane, Dover';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('linked helpers', function () {
     it('should link all values when names are used first', function () {
       var template = [
