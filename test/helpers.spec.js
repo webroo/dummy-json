@@ -142,8 +142,8 @@ describe('helpers', function () {
     });
 
     it('should return integers rounded to the nearest multiple of the given value', function () {
-      var template = '{{int 0 100 round=10}}, {{int 0 100 round=10}}, {{int 0 100 round=10}}';
-      var expected = '40, 40, 10';
+      var template = '{{int 0 100 round=5}}, {{int 0 100 round=10}}, {{int 0 100 round=20}}';
+      var expected = '45, 40, 0';
       assertStringOutput(template, expected);
     });
 
