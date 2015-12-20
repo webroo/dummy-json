@@ -374,6 +374,38 @@ describe('helpers', function () {
     });
   });
 
+  describe('zipcode', function () {
+    it('should return different zipcodes when used repeatedly', function () {
+      var template = '{{zipcode}}, {{zipcode}}, {{zipcode}}';
+      var expected = '43960, 42063, 10432';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('postcode', function () {
+    it('should return different postcodes when used repeatedly', function () {
+      var template = '{{postcode}}, {{postcode}}, {{postcode}}';
+      var expected = 'LK0 5JE, FN4 8AO, LT5 3VA';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('lat', function () {
+    it('should return different latitude values when used repeatedly', function () {
+      var template = '{{lat}}, {{lat}}, {{lat}}, {{lat}}';
+      var expected = '-11.890727, -15.339788, -72.850604, 17.676792';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('long', function () {
+    it('should return different longitude values when used repeatedly', function () {
+      var template = '{{long}}, {{long}}, {{long}}, {{long}}';
+      var expected = '-23.781453, -30.679576, -145.701208, 35.353584';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('linked helpers', function () {
     it('should link all values when names are used first', function () {
       var template = [
