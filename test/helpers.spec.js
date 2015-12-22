@@ -406,6 +406,66 @@ describe('helpers', function () {
     });
   });
 
+  describe('phone', function () {
+    it('should return different phone numbers when used repeatedly', function () {
+      var template = '{{phone}}, {{phone}}, {{phone}}';
+      var expected = '440-531-2548, 054-753-8054, 023-013-3024';
+      assertStringOutput(template, expected);
+    });
+
+    it('should allow custom phone number format strings', function () {
+      var template = '{{phone "+1 (xxx) xxx-xxxx"}}, {{phone "(x) 1xx 9xxx"}}';
+      var expected = '+1 (440) 531-2548, (0) 154 9753';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('guid', function () {
+    it('should return different guids when used repeatedly', function () {
+      var template = '{{guid}}, {{guid}}';
+      var expected = '66195238-c087-46d0-a145-36504604fe17, 595be376-f0e9-49ed-adb2-a756f15c11ce';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('ipv4', function () {
+    it('should return different IPv4s when used repeatedly', function () {
+      var template = '{{ipv4}}, {{ipv4}}, {{ipv4}}';
+      var expected = '111.106.24.153, 95.43.54.128, 124.206.5.138';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('ipv6', function () {
+    it('should return different IPv6s when used repeatedly', function () {
+      var template = '{{ipv6}}, {{ipv6}}';
+      var expected = '6f17:6a2e:1863:9923:5f10:2b49:36fd:80dc, 7c7a:ceac:569:8a67:7442:c1e0:815e:6416';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('color', function () {
+    it('should return different colors when used repeatedly', function () {
+      var template = '{{color}}, {{color}}, {{color}}';
+      var expected = 'lawngreen, khaki, cadetblue';
+      assertStringOutput(template, expected);
+    });
+  });
+
+  describe('hexColor', function () {
+    it('should return different hexColors when used repeatedly', function () {
+      var template = '{{hexColor}}, {{hexColor}}, {{hexColor}}, {{hexColor}}';
+      var expected = '#6f6a18, #995f2b, #36807c, #ce058a';
+      assertStringOutput(template, expected);
+    });
+
+    it('should return different websafe hexColors when used repeatedly', function () {
+      var template = '{{hexColor websafe=true}}, {{hexColor websafe=true}}, {{hexColor websafe=true}}';
+      var expected = '#666600, #996633, #339966';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('linked helpers', function () {
     it('should link all values when names are used first', function () {
       var template = [
