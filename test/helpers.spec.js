@@ -376,9 +376,16 @@ describe('helpers', function () {
 
   describe('zipcode', function () {
     it('should return different zipcodes when used repeatedly', function () {
+      // Temporarily set a new seed for this test so it generates values that provide
+      // sufficient code coverage
+      var originalSeed = dummyjson.seed;
+      dummyjson.seed = 'xyz1234';
+
       var template = '{{zipcode}}, {{zipcode}}, {{zipcode}}';
-      var expected = '43960, 42063, 10432';
+      var expected = '86930, 02430, 73050';
       assertStringOutput(template, expected);
+
+      dummyjson.seed = originalSeed;
     });
   });
 
