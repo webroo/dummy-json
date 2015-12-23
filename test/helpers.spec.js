@@ -473,6 +473,20 @@ describe('helpers', function () {
     });
   });
 
+  describe('lorem', function () {
+    it('should return 25 lorem ipsum words by default', function () {
+      var template = '{{lorem}}';
+      var expected = 'Quisque nam ut tincidunt sed. Metus euismod lacinia dolor maximus vehicula nibh. Quisque ut accumsan finibus. Sed placerat dolor in consectetur, commodo mi lobortis sed.';
+      assertStringOutput(template, expected);
+    });
+
+    it('should return the specified number of lorem ipsum words', function () {
+      var template = '{{lorem 10}}';
+      var expected = 'Quisque nam ut tincidunt sed. Metus euismod lacinia dolor neque.';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('linked helpers', function () {
     it('should link all values when names are used first', function () {
       var template = [

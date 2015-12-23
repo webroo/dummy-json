@@ -406,7 +406,7 @@ Generates a random phone number in the format `xxx-xxx-xxxx`, for example "123-4
 
 Generates a CSS color name, from a predefined list. For example: `forestgreen`
 
-### Hex Color
+### Hex color
 
 `{{hexColor [websafe=false]}}`
 
@@ -439,6 +439,22 @@ Generates a random IPv4 address.
 `{{ipv6}}`
 
 Generates a random IPv6 address.
+
+### Lorem ipsum
+
+`{{lorem [wordCount]}}`
+
+* `wordcount` Number of words to generate (optional, default is 25)
+
+Generates random sentences of lorem ipsum text, with occasional punctuation (commas and periods/full-stops).
+
+```js
+// Generates 25 words of lorem ipsum
+{{lorem}} // Amet vel aliquam laoreet accumsan adipiscing... etc...
+
+// Generates 5 words of lorem ipsum
+{{lorem 5}} //  Orci nisi laoreet maximus dictum.
+```
 
 ## Synchronized helpers
 
@@ -572,7 +588,7 @@ var result = dummyjson.parse(template, {partials: partials});
 
 `dummyjson.parse(string, options)` Parses the given string and returns a new string
 
-* `string` Template string to parse  
+* `string` Template string to parse
 * `options` Object that can contain one or more of the following properties:
   * `options.seed` Random seed for this particular parse routine
   * `options.helpers` Object map of custom helper functions
