@@ -94,7 +94,7 @@ Install via npm:
 var dummyjson = require('dummy-json');
 var template = '{\
 	"name": {{firstName}},\
-	"age": {{number 18 65}}\
+	"age": {{int 18 65}}\
   }';
 var result = dummyjson.parse(template); // Returns a string
 ```
@@ -208,13 +208,13 @@ The output can be formatted using a numeric format string, provided by numbro. F
 
 ```js
 // Generates a random integer between 0 and 100
-{{number 0 100}} // 43
+{{int 0 100}} // 43
 
 // Rounds the random integer to the nearest multiple of 5
-{{number 0 100 round=5}} // 65
+{{int 0 100 round=5}} // 65
 
 // Formats the random integer using numbro
-{{number 10000 50000 '0,0.00'}} // 23,462.00
+{{int 10000 50000 '0,0.00'}} // 23,462.00
 ```
 
 ### Float
@@ -235,10 +235,10 @@ The output can be formatted using a numeric format string, provided by numbro. F
 {{float 0 1}} // 0.4319351462490857
 
 // Rounds the random float to the nearest multiple of 0.1
-{{number 0 1 round=0.1}} // 0.4
+{{float 0 1 round=0.1}} // 0.4
 
 // Formats the random float using numbro
-{{number 10000 50000 '0,0.00'}} // 33,127.39
+{{float 10000 50000 '0,0.00'}} // 33,127.39
 ```
 
 ### Date
