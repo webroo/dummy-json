@@ -456,6 +456,38 @@ Generates random sentences of lorem ipsum text, with occasional punctuation (com
 {{lorem 5}} //  Orci nisi laoreet maximus dictum.
 ```
 
+### Lowercase
+
+{{lowercase (helper)}}
+
+* `helper` Any helper that returns a string (required)
+
+Converts the output of any string-based helper to lowercase. This uses Handlebars' [subexpression syntax](http://handlebarsjs.com/expressions.html#subexpressions).
+
+```js
+// Change firstName to lowercase
+{{lowercase (firstName)}} // ivan
+
+// Change city to lowercase
+{{lowercase (city)}} // boston
+```
+
+### Uppercase
+
+{{uppercase (helper)}}
+
+* `helper` Any helper that returns a string (required)
+
+Converts the output of any string-based helper to uppercase. This uses Handlebars' [subexpression syntax](http://handlebarsjs.com/expressions.html#subexpressions).
+
+```js
+// Change firstName to uppercase
+{{uppercase (firstName)}} // IVAN
+
+// Change city to uppercase
+{{uppercase (city)}} // BOSTON
+```
+
 ## Synchronized helpers
 
 Several helpers, such as name and email, are linked together and attempt to synchronize their values. This gives the random data some continuity:

@@ -834,4 +834,22 @@ describe('helpers', function () {
       assertJSONOutput(template, expected);
     });
   });
+
+  describe('subexpression helpers', function () {
+    describe('lowercase', function () {
+      it('should change the given value to lowercase', function () {
+        var template = '{{lowercase (firstName)}}';
+        var expected = 'ivan';
+        assertStringOutput(template, expected);
+      });
+    });
+
+    describe('uppercase', function () {
+      it('should change the given value to uppercase', function () {
+        var template = '{{uppercase (firstName)}}';
+        var expected = 'IVAN';
+        assertStringOutput(template, expected);
+      });
+    });
+  });
 });
