@@ -1,6 +1,6 @@
 # Dummy JSON
 
-Dummy JSON is a Node utility that allows you to generate random JSON data using Handlebars templates. It uses a collection of Handlebars helpers designed to return common data values, such as names and addresses, numbers, dates, booleans, and so on. Best used in conjunction with a mock API service to return test data.
+Dummy JSON is a Node utility that allows you to generate random JSON data using Handlebars templates. It comes with a built-in collection of Handlebars helpers that return common data values, such as names, numbers, and dates, and also allows you to write your own.
 
 * [Getting started](#getting-started)
 * [Available helpers](#available-helpers)
@@ -10,7 +10,7 @@ Dummy JSON is a Node utility that allows you to generate random JSON data using 
 
 ## Example
 
-To correctly format the table in this example please ensure you are viewing it on the [github page](https://github.com/webroo/dummy-json)
+Please view the following example on the [github page](https://github.com/webroo/dummy-json) if it's not formatted correctly.
 
 <table>
 <thead><tr><td width="50%">Template string</td><td width="50%">Output string</td></tr></thead>
@@ -20,12 +20,13 @@ To correctly format the table in this example please ensure you are viewing it o
   "users": [
     {{#repeat 2}}
     {
-      "id": {{index}},
-      "firstName": "{{firstName}}",
-      "lastName": "{{lastName}}",
-      "email": "{{email}}",
+      "id": {{@index}},
+      "name": "{{firstName}} {{lastName}}",
       "work": "{{company}}",
-      "age": {{int 20 50}},
+      "email": "{{email}}",
+      "dob": "{{date '1900' '2000' 'DD/MM/YYYY'}}",
+      "address": "{{int 1 100}} {{street}}",
+      "city": "{{city}}",
       "optedin": {{boolean}}
     }
     {{/repeat}}
@@ -35,7 +36,11 @@ To correctly format the table in this example please ensure you are viewing it o
     "img{{@index}}.png"
     {{/repeat}}
   ],
-  "tolerance": {{float '0' '2'}},
+  "coordinates": {
+    "x": {{float -50 50 '0.00'}},
+    "y": {{float -25 25 '0.00'}}
+  },
+  "price": "${{int 0 99999 '0,0.00'}}
 }
 </pre>
 </td><td align="left" valign="top">
@@ -44,20 +49,22 @@ To correctly format the table in this example please ensure you are viewing it o
   "users": [
     {
       "id": 0,
-      "firstName": "Leanne",
-      "lastName": "Flinn",
-      "email": "leanne.flinn@unilogic.com",
+      "name": "Adam Carter",
       "work": "Unilogic",
-      "age": 26,
+      "email": "adam.carter@unilogic.com",
+      "dob": "24/11/1978",
+      "address": "83 Warner Street",
+      "city": "Boston",
       "optedin": true
     },
     {
       "id": 1,
-      "firstName": "Edward",
-      "lastName": "Young",
-      "email": "edward.young@solexis.com",
-      "work": "Solexis",
-      "age": 31,
+      "name": "Leanne Brier",
+      "work": "Connic",
+      "email": "leanne.brier@connic.org",
+      "dob": "13/05/1987",
+      "address": "9 Coleman Avenue",
+      "city": "Toronto",
       "optedin": false
     }
   ],
@@ -66,7 +73,11 @@ To correctly format the table in this example please ensure you are viewing it o
     "img1.png",
     "img2.png"
   ],
-  "tolerance": 1.7508240924216807,
+  "coordinates": {
+  	"x": 35.12,
+  	"y": -21.49
+  },
+  "price": "$59,395.88"
 }
 </pre>
 </td></tr></tbody></table>
@@ -285,6 +296,12 @@ By default the output uses `HH:mm`. Alternatively the output can be formatted us
 
 Generates a random `true` or `false` value.
 
+### Title
+
+`{{title}}`
+
+Generates a random title prefix, from a predefined list, such as "Mr", "Mrs", "Dr", etc.
+
 ### First name
 
 `{{firstName}}`
@@ -458,7 +475,7 @@ Generates random sentences of lorem ipsum text, with occasional punctuation (com
 
 ### Lowercase
 
-{{lowercase (helper)}}
+`{{lowercase (helper)}}`
 
 * `helper` Any helper that returns a string (required)
 
@@ -474,7 +491,7 @@ Converts the output of any string-based helper to lowercase. This uses Handlebar
 
 ### Uppercase
 
-{{uppercase (helper)}}
+`{{uppercase (helper)}}`
 
 * `helper` Any helper that returns a string (required)
 
@@ -490,7 +507,7 @@ Converts the output of any string-based helper to uppercase. This uses Handlebar
 
 ## Synchronized helpers
 
-Several helpers, such as name and email, are linked together and attempt to synchronize their values. This gives the random data some continuity:
+Several helpers, such as name and email, are linked together and attempt to synchronize their values. This gives the random data some continuity. This happens automatically if you use helpers together in a repeat block.
 
 ```js
 "firstName": "{{firstName}}", // Michael
@@ -498,7 +515,7 @@ Several helpers, such as name and email, are linked together and attempt to sync
 "email": "{{email}}"          // michael.turner@unilogic.com
 ```
 
-The helpers can be placed in any order and will still attempt to synchronize:
+The helpers can be placed in any order and will still synchronize:
 
 ```js
 "email": "{{email}}"          // michael.turner@unilogic.com
@@ -506,7 +523,7 @@ The helpers can be placed in any order and will still attempt to synchronize:
 "lastName": "{{lastName}}",   // Turner
 ```
 
-This synchronization is reset whenever the same helper is used twice (or at the beginning of a repeat block):
+This synchronization is reset whenever the same helper is used twice (or in each iteration of a repeat block):
 
 ```js
 "email": "{{email}}"          // michael.turner@unilogic.com
@@ -517,41 +534,44 @@ This synchronization is reset whenever the same helper is used twice (or at the 
 "lastName": "{{lastName}}",   // Chapman
 ```
 
-The following helpers sync their values:
+The following helpers synchronize their values:
 
-* firstName, lastName, username, company, domain, tld, email
-* country, countryCode
+* `firstName`, `lastName`, `username`, `company`, `domain`, `tld`, `email`
+* `country`, `countryCode`
 
 ## Writing your own helpers
 
-The `parse` method accepts a second parameter where you can pass an object map of custom helper functions. The key of each property becomes the helper name in the template, for example:
+To write your own helpers you need to pass an additional parameter to `parse()` containing an object map of methods:
 
 ```js
-var helpers = {
+var myHelpers = {
   direction: function() {
-    return Math.random() > 0.5 ? 'left' : 'right';
+    // Use dummyjson random to ensure the seeded random number generator is used
+    return dummyjson.utils.random() > 0.5 ? 'left' : 'right';
   }
 };
-var template = '"direction": "{{direction}}"';
-var result = dummyjson.parse(template, {helpers: helpers});
-
-// Output
-"direction": "left"
+var template = '{{direction}}';
+var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "left"
 ```
 
-For more information on writing helpers see the [Handlebars documentation](http://handlebarsjs.com/block_helpers.html).
+The helpers follow the same syntax as regular Handlebars helpers, but instead of registering them with `Handlebars.registerHelper` you simply pass them to `dummyjson.parse()`. For more information on writing helpers see the [Handlebars documentation](http://handlebarsjs.com/block_helpers.html).
 
-### Using parameters
-
-TODO
+When generating data using random numbers you should use the `dummyjson.utils` module. This ensures you're using the seeded random number generator and means your results will be repeatable if you decide to use a seed. See the section on [Seeded random data](#seeded-random-data) for more information.
 
 ### Array-based helpers
 
-TODO
+One of the most common types of helper is one that pulls a random item from an array:
 
-### Overriding existing helpers
-
-***TODO Just pass in helpers with the same name to override existing ones***
+```js
+var myHelpers = {
+  orientation: function() {
+    // Use randomArrayItem to ensure the seeded number generator is used
+    return dummyjson.utils.randomArrayItem(['North', 'South', 'East', 'West']);
+  }
+};
+var template = '{{orientation}}';
+var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "East"
+```
 
 ## Seeded random data
 
@@ -561,7 +581,7 @@ If you need repeatable mock data then you can set a seed for the pseudo random n
 // Set the seed, can be any string value
 dummyjson.seed = 'helloworld';
 
-// Every subsequent call to parse() will now generate the same data values
+// Every subsequent call to parse() will now generate the same values
 var result = dummyjson.parse(string);
 ```
 
@@ -571,68 +591,164 @@ Alternatively you can set a one-time seed for a specific `parse()` call:
 var result = dummyjson.parse(string, {seed: 'abc123'});
 ```
 
-Note: A one-time seed will not overwrite `dummyjson.seed`, and any subsequent call to `parse()` without a seed will use the original `dummyjson.seed` value.
+Note: A one-time seed will not overwrite `dummyjson.seed`, meaning any subsequent call to `parse()` without a seed will use the original `dummyjson.seed` value.
+
+### Ensuring your own helpers use the seed
+
+To ensure your own helpers use the random seed you must use the `dummyjson.utils` module whenever you want a random number, character, or array item. See [The API](#the-api) for a list of methods available to you.
 
 ## Advanced usage
 
-### Using your own data
+### Overriding built-in data
+
+If you want to use a different set of names or addresses then you can override the built-in data using the `mockdata` option:
 
 ```js
-var data = {
-  animals: ['cat', 'dog', 'cow', 'wolf', 'giraffe']
+var myMockdata = {
+  firstNames: ['Bob', 'Jane', 'Carl', 'Joan']
 };
-var template = '{ "pets": [ {{#each animals}}{{this}}{{/each}} ] }';
-var result = dummyjson.parse(template, {data: data});
+var result = dummyjson.parse(template, {mockdata: myMockdata});
 ```
 
-Useful for splicing bits of real data into the generated reponse. All the regular Handlebars functionality is available to work with the data.
+See [The API](#the-api) for a full list of mockdata arrays you can override.
 
-### Using your own partials
-It's even possible to separate your entities/resources in small pieces of code to promote reuse and encapsulation.
+### Using your own data
+
+The same `data` option can be used to insert your own data. All the regular Handlebars functionality is then available to work with it:
 
 ```js
-var personTmpl = {
-  "id": {{index}},
-  "firstName": "{{firstName}}",
-  "lastName": "{{lastName}}",
-  "email": "{{email}}",
-  "work": "{{company}}",
-  "age": {{number 20 50}},
-  "optedin": {{boolean}}
+var myMockdata = {
+  copyright: 'Copyright Myself 2015'
 };
+var template = '{{copyright}}';
+var result = dummyjson.parse(template, {mockdata: myMockdata}); // Returns "Copyright Myself 2015"
+```
 
-var partials = {
-  person: personTmpl
+### Using built-in helpers
+
+All the built-in helpers are available for you to use in your own helpers, and are available in `dummyjson.helpers`:
+
+```js
+var myHelpers = {
+  fullname: function(options) {
+    // You must always forward the options argument to built-in helpers
+    return dummyjson.helpers.firstName(options) + ' ' + dummyjson.helpers.lastName(options);
+  }
+};
+var template = '{{fullname}}';
+var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "Ivan Young"
+```
+
+As mentioned in the comment above you must always forward the `options` argument to built-in helpers. The `options` argument is automatically given to all helpers by Handlebars, and is always passed as the last argument. The [Handlebars documentation](http://handlebarsjs.com/block_helpers.html) explains this in more detail.
+
+### Overriding existing helpers
+
+Simply name your custom helper the same as a built-in one:
+
+```js
+var myHelpers = {
+  postcode: function() {
+    // This version of {{postcode}} will now be used instead of the built-in one
+    return 'A9A AA9';
+  }
+};
+var template = '{{postcode}}';
+var result = dummyjson.parse(template, {helpers: myHelpers});
+```
+
+### Using your own partials
+
+You can use Handlebars partials to encapsulate repeatable content into a reusable helper:
+
+```js
+var myPartials = {
+  user: {
+    "id": {{index}},
+    "firstName": "{{firstName}}",
+    "lastName": "{{lastName}}",
+    "email": "{{email}}"
+  }
 };
 
 var template = {
-  "people": [
+  "users": [
     {{#repeat 3}}
-      {{> person }}
+      {{> user}}
     {{/repeat}}
   ]
 };
 
-var result = dummyjson.parse(template, {partials: partials});
+var result = dummyjson.parse(template, {partials: myPartials});
 ```
 
 ### The API
 
+`dummyjson.seed` Set the seed for all future parsing. Default is null (random every time).
+
 `dummyjson.parse(string, options)` Parses the given string and returns a new string
 
 * `string` Template string to parse
-* `options` Object that can contain one or more of the following properties:
+* `options{}` Object that can contain the following properties:
   * `options.seed` Random seed for this particular parse routine
-  * `options.helpers` Object map of custom helper functions
-  * `options.partials` Object map of custom partial strings
+  * `options.helpers{}` Object map of custom helper functions (can override built-in helpers)
+  * `options.mockdata{}` Object map of custom mockdata (can override built-in mockdata)
+  * `options.partials{}` Object map of custom partial strings
 
-`dummyjson.seed` Set the seed for all future parsing. Default is null.
+`dummyjson.mockdata` Arrays of built-in mock data. See [Advanced usage](#advanced-usage) on how to override these.
 
-`dummyjson.mockdata`
+* `firstNames[]`
+* `lastNames[]`
+* `companies[]`
+* `tlds[]`
+* `streets[]`
+* `cities[]`
+* `countries[]`
+* `countryCodes[]`
+* `colors[]`
 
-`dummyjson.helpers`
+`dummyjson.helpers` Built-in helper methods. See [Available helpers](#available-helpers) for more information.
+
+* `repeat(min, max, options)`
+* `int(min, max, format, options)`
+* `float(min, max, format, options)`
+* `boolean()`
+* `date(min, max, format, options)`
+* `time(min, max, format, options)`
+* `title(options)`
+* `firstName(options)`
+* `lastName(options)`
+* `username(options)`
+* `company(options)`
+* `tld(options)`
+* `domain(options)`
+* `email(options)`
+* `street(options)`
+* `city(options)`
+* `country(options)`
+* `countryCode(options)`
+* `zipCode()`
+* `postcode()`
+* `lat(options)`
+* `long(options)`
+* `phone(format)`
+* `ipv4()`
+* `ipv6()`
+* `color(options)`
+* `hexColor(options)`
+* `lorem(totalWords, options)`
+* `lowercase(value)`
+* `uppercase(value)`
 
 `dummyjson.utils`
+
+* `setRandomSeed(seed)` Sets the string-based `seed` value for all subsequent generations
+* `random()` Generates a random float in the range [0, 1). Use this instead of `Math.random()`
+* `randomInt(min, max)` Generates a random integer in the range [min, max]
+* `randomFloat(min, max)` Generates a random float in the range [min, max)
+* `randomBoolean()` Generates a random boolean (true or false)
+* `randomDate(min, max)` Generates a random `Date` between the given `min`/`max` millisecond values
+* `randomArrayItem(array)` Returns a random item from the given `array`
+* `randomChar(charset)` Returns a random char from the default `[A-Z]` set, or the given `charset` string
 
 ## Migrating from 0.0.x releases to 1.0.0
 
