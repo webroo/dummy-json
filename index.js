@@ -6,6 +6,7 @@ var helpers = require('./lib/helpers');
 var utils = require('./lib/utils');
 
 var dummyjson = {
+  // Global seed for the random number generator
   seed: null,
 
   parse: function (string, options) {
