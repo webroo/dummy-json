@@ -152,6 +152,12 @@ describe('helpers', function () {
       var expected = '1,434.00';
       assertStringOutput(template, expected);
     });
+
+    it('should return an integer formatted using the format string in single quotes', function () {
+      var template = '{{int 1000 2000 \'0,0.00\'}}';
+      var expected = '1,434.00';
+      assertStringOutput(template, expected);
+    });
   });
 
   describe('float', function () {
