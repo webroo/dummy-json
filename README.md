@@ -110,6 +110,8 @@ var template = '{\
 var result = dummyjson.parse(template); // Returns a string
 ```
 
+Note: if you're using ES6 you can write multi-line strings using [template strings](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/template_strings).
+
 #### Generate from a file
 
 Instead of writing multi-line strings in Javascript you can load the template from a file using Node's `fs` utility:
@@ -540,7 +542,7 @@ The synchronization is reset whenever the same helper is used twice, or in each 
 "email": "{{email}}"          // michael.turner@unilogic.com
 "firstName": "{{firstName}}", // Michael
 "lastName": "{{lastName}}",   // Turner
-"email": "{{email}}"          // grace.chapman@westgate.org (Syncing is reset here)
+"email": "{{email}}"          // grace.chapman@westgate.org (Note: syncing is reset here)
 "firstName": "{{firstName}}", // Grace
 "lastName": "{{lastName}}",   // Chapman
 ```
@@ -569,7 +571,7 @@ Your own helpers will be mixed with the built-in helpers, allowing you to use bo
 
 The helpers use the same syntax as regular Handlebars helpers, but instead of registering them with `Handlebars.registerHelper()` you pass them to `dummyjson.parse()`. For more information on writing helpers see the [Handlebars documentation](http://handlebarsjs.com/block_helpers.html).
 
-When generating data using random numbers you should use the `dummyjson.utils` module. This ensures you're using the seeded random number generator and means your results will be repeatable if you decide to use a seed. See the section on [Seeded random data](#seeded-random-data) for more information and a complete list of methods.
+When generating data using random numbers you should always use the `dummyjson.utils` module. This ensures you're using the seeded random number generator and means your results will be repeatable if you decide to use a seed. See the section on [Seeded random data](#seeded-random-data) for more information and a complete list of methods available in `dummyjson.utils`.
 
 ### Array-based helpers
 
@@ -670,11 +672,11 @@ var myHelpers = {
 var result = dummyjson.parse(template, {helpers: myHelpers});
 ```
 
-Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described in [Overriding built-in mock data](#overriding-built-in-mock-data).
+Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described above in [Overriding built-in mock data](#overriding-built-in-mock-data).
 
 ### Using other data
 
-The `mockdata` option can also be used to insert other data, for example:
+The `mockdata` option can also be used to insert other data, like primitive values:
 
 ```js
 var myMockdata = {
@@ -684,9 +686,19 @@ var template = '{{copyright}}';
 var result = dummyjson.parse(template, {mockdata: myMockdata}); // Returns "Copyright Myself 2015"
 ```
 
+Or arrays which you can loop over using Handlebar's [each helper](http://handlebarsjs.com/builtin_helpers.html#iteration):
+
+```js
+var myMockdata = {
+  animals: ['fox', 'badger', 'crow']
+};
+var template = '{{#each animals}}{{this}} {{/each}}';
+var result = dummyjson.parse(template, {mockdata: myMockdata}); // Returns "fox badger crow"
+```
+
 ### Using built-in helpers inside your own helpers
 
-All the built-in helpers are available for you to use in your own helpers. They are available in `dummyjson.helpers`:
+All the built-in helpers are available for you to use in your own helpers. They are available in `dummyjson.helpers`. Here's an example of using two existing helpers to make a new one:
 
 ```js
 var myHelpers = {
@@ -726,8 +738,10 @@ var template = '{\
 var result = dummyjson.parse(template, {partials: myPartials});
 ```
 
-## Migrating from 0.0.x releases to 1.0.0
+## Upgrading from 0.0.x releases to 1.0.0
 
+* The `options.data` argument of `parse()` has been renamed `options.mockdata`
+* Names and companies must now be overridden using `options.mockdata`
 * The repeat helper no longer accepts an array, use the default Handlebars `{{#each}}` instead
 * Use `{{@index}}` instead of `{{index}}` inside repeat blocks, as per default Handlebars functionality
 * The `{{number}}` helper no longer exists and has been separated into `{{int}}` and `{{float}}`
