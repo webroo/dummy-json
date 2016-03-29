@@ -20,7 +20,7 @@ Please view the following example on the [github page](https://github.com/webroo
   "users": [
     {{#repeat 2}}
     {
-      "id": {{@index}},
+      "id": {{@id}},
       "name": "{{firstName}} {{lastName}}",
       "work": "{{company}}",
       "email": "{{email}}",
@@ -48,7 +48,7 @@ Please view the following example on the [github page](https://github.com/webroo
 {
   "users": [
     {
-      "id": 0,
+      "id": 1,
       "name": "Adam Carter",
       "work": "Unilogic",
       "email": "adam.carter@unilogic.com",
@@ -58,7 +58,7 @@ Please view the following example on the [github page](https://github.com/webroo
       "optedin": true
     },
     {
-      "id": 1,
+      "id": 2,
       "name": "Leanne Brier",
       "work": "Connic",
       "email": "leanne.brier@connic.org",
@@ -192,7 +192,7 @@ You can omit the comma and line break by using `comma=false`, for example:
 {{#repeat 3 comma=false}}hello{{/repeat}} // hellohellohello
 ```
 
-You can get the iteration position using the standard Handlebars variables `@index`, `@first`, `@last`. The total number of iterations is available using `@total`.
+You can get the iteration position using the standard Handlebars variables `@id`, `@index`, `@first`, `@last`. The total number of iterations is available using `@total`.
 
 ```js
 // Repeat the block 3 times using @index to modify the filename
@@ -720,7 +720,7 @@ You can use Handlebars partials to encapsulate content into a reusable blocks. P
 ```js
 var myPartials = {
   user: '{\
-    "id": {{@index}},\
+    "id": {{@id}},\
     "firstName": "{{firstName}}",\
     "lastName": "{{lastName}}",\
     "email": "{{email}}"\

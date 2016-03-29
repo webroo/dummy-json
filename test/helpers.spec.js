@@ -89,6 +89,7 @@ describe('helpers', function () {
         '  {{#repeat 2}}',
         '  {',
         '    "index": {{@index}},',
+        '    "id": {{@id}},',
         '    "total": {{@total}},',
         '    "first": {{@first}},',
         '    "last": {{@last}}',
@@ -99,12 +100,14 @@ describe('helpers', function () {
       var expected = [
         {
           'index': 0,
+          'id': 1,
           'total': 2,
           'first': true,
           'last': false
         },
         {
           'index': 1,
+          'id': 2,
           'total': 2,
           'first': false,
           'last': true
