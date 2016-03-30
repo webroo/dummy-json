@@ -242,6 +242,19 @@ describe('helpers', function () {
       var expected = '2009';
       assertStringOutput(template, expected);
     });
+
+    // This is designed to test date boundaries on machines in different timezones.
+    // It can only be run in Pacific Standard Time (PST) so is skipped by default.
+    it.skip('should return the exact date with PST timezone offset', () => {
+      var template = dummyjson.parse('{{date "1980-01-01" "1980-01-01"}}');
+      var expected = 'Tue Jan 01 1980 00:00:00 GMT-0800 (PST)';
+      assertStringOutput(template, expected);
+
+      // Also check fecha returns the correct date (by supplying a date formatting string)
+      var template = dummyjson.parse('{{date "1980-01-01" "1980-01-01" "YYYY-MM-DD"}}');
+      var expected = '1980-01-01';
+      assertStringOutput(template, expected);
+    });
   });
 
   describe('time', function () {
