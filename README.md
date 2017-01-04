@@ -4,6 +4,7 @@ Dummy JSON is a Node utility that allows you to generate random JSON data using 
 
 * [Getting started](#getting-started)
 * [Available helpers](#available-helpers)
+* [Using your own data](#using-your-own-data)
 * [Writing your own helpers](#writing-your-own-helpers)
 * [Seeded random data](#seeded-random-data)
 * [Advanced usage](#advanced-usage)
@@ -24,7 +25,7 @@ Please view the following example on the [github page](https://github.com/webroo
       "name": "{{firstName}} {{lastName}}",
       "work": "{{company}}",
       "email": "{{email}}",
-      "dob": "{{date '1900' '2000' 'DD/MM/YYYY'}}",
+      "dob": "{{date '1900' '2000' 'YYYY'}}",
       "address": "{{int 1 100}} {{street}}",
       "city": "{{city}}",
       "optedin": {{boolean}}
@@ -52,7 +53,7 @@ Please view the following example on the [github page](https://github.com/webroo
       "name": "Adam Carter",
       "work": "Unilogic",
       "email": "adam.carter@unilogic.com",
-      "dob": "24/11/1978",
+      "dob": "1978",
       "address": "83 Warner Street",
       "city": "Boston",
       "optedin": true
@@ -297,10 +298,10 @@ By default the output uses `HH:mm`. Alternatively the output can be formatted us
 
 ```js
 // Generate a random time
-{{date '09:00' '17:30'}} // 14:08
+{{time '09:00' '17:30'}} // 14:08
 
 // Format the time using fecha
-{{date '09:00' '17:30' 'h:mm a'}} // 2:08 pm
+{{time '09:00' '17:30' 'h:mm a'}} // 2:08 pm
 ```
 
 ### Boolean
@@ -552,6 +553,30 @@ The following helpers synchronize their values:
 * `firstName`, `lastName`, `username`, `company`, `domain`, `tld`, `email`
 * `country`, `countryCode`
 
+## Using your own data
+
+If you want to use a different set of names or addresses then you can override the built-in data using the `mockdata` option:
+
+```js
+var myMockdata = {
+  firstNames: ['Bob', 'Jane', 'Carl', 'Joan'],
+  lastNames: ['Smith', 'Jones', 'Wallis', 'Gilmore']
+};
+var result = dummyjson.parse(template, {mockdata: myMockdata});
+```
+
+The following arrays are available to override:
+
+* `firstNames`
+* `lastNames`
+* `companies`
+* `tlds`
+* `streets`
+* `cities`
+* `countries`
+* `countryCodes`
+* `colors`
+
 ## Writing your own helpers
 
 To write your own helpers you need to create an object map of helper methods and pass it to the `options` param of `parse()`, for example:
@@ -590,13 +615,13 @@ var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "East"
 
 ## Seeded random data
 
-If you need repeatable dummy data then you can set a global seed for the pseudo random number generator:
+By default dummyjson generates different results every time it's run. If you need repeatable dummy data then you can set a global seed for the pseudo random number generator:
 
 ```js
 // Set the seed, can be any string value
 dummyjson.seed = 'helloworld';
 
-// Every subsequent call to parse() will now generate the same values
+// Every subsequent call to parse() will now generate the same output
 var result = dummyjson.parse(string);
 ```
 
@@ -633,31 +658,6 @@ var myHelpers = {
 
 ## Advanced usage
 
-### Overriding built-in mock data
-
-If you want to use a different set of names or addresses then you can override the built-in data using the `mockdata` option:
-
-```js
-var myMockdata = {
-  firstNames: ['Bob', 'Jane', 'Carl', 'Joan']
-};
-var result = dummyjson.parse(template, {mockdata: myMockdata});
-```
-
-The following arrays are available to override:
-
-* `firstNames`
-* `lastNames`
-* `companies`
-* `tlds`
-* `streets`
-* `cities`
-* `countries`
-* `countryCodes`
-* `colors`
-
-Note: This technique is preferable to overriding the helpers (explained below) as it maintains the synchronization functionality of names, companies, emails, etc.
-
 ### Overriding built-in helpers
 
 You can replace any of the built-in helpers by simply creating your own with the same name:
@@ -672,7 +672,7 @@ var myHelpers = {
 var result = dummyjson.parse(template, {helpers: myHelpers});
 ```
 
-Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described above in [Overriding built-in mock data](#overriding-built-in-mock-data).
+Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described above in [Using your own data](#using-your-own-data).
 
 ### Using other data
 
