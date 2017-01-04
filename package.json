@@ -1,7 +1,7 @@
 {
   "name": "dummy-json",
   "description": "Dummy JSON mock data generator for Node.js",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "homepage": "https://github.com/webroo/dummy-json",
   "author": "Matt Sweetman",
   "license": "MIT",
