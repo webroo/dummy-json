@@ -10,8 +10,8 @@
     "url": "git://github.com/webroo/dummy-json.git"
   },
   "dependencies": {
-    "fecha": "^1.1.0",
     "handlebars": "~4.0.5",
+    "moment": "^2.17.1",
     "numbro": "^1.6.2",
     "seedrandom": "^2.4.2"
   },
