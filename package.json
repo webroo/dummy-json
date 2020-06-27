@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "fecha": "^1.1.0",
-    "handlebars": "~4.0.5",
+    "handlebars": "^4.5.3",
     "numbro": "^1.6.2",
     "seedrandom": "^2.4.2"
   },
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^6.2.2"
   },
   "main": "index.js",
   "bin": {
