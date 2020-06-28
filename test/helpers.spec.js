@@ -279,19 +279,19 @@ describe('helpers', function () {
     });
 
     it('should return different time when used repeatedly', function () {
-      var template = '{{time "09:00" "17:00"}}, {{time "09:00" "17:00"}}, {{time "09:00" "17:00"}}';
+      var template = '{{time "09:00Z" "17:00Z"}}, {{time "09:00Z" "17:00Z"}}, {{time "09:00Z" "17:00Z"}}';
       var expected = '12:28, 12:19, 09:45';
       assertStringOutput(template, expected);
     });
 
     it('should return a time formatted using the format string', function () {
-      var template = '{{time "09:00" "17:00" "HH:mm:ss"}}';
+      var template = '{{time "09:00Z" "17:00Z" "HH:mm:ss"}}';
       var expected = '12:28:17';
       assertStringOutput(template, expected);
     });
 
     it('should return a time formatted in unix time', function () {
-      var template = '{{time "09:00" "17:00" "unix"}}';
+      var template = '{{time "09:00Z" "17:00Z" "unix"}}';
       var expected = '44897';
       assertStringOutput(template, expected);
     });
