@@ -4,19 +4,19 @@ var dummyjson = require('../index');
 // Asserts the basic string output of dummyjson.parse() (by default dummyjson.parse() returns
 // a string). If the template or expected params are arrays then the contents will be joined with
 // line-breaks to create a multiline string.
-function assertStringOutput (template, expected) {
+function assertStringOutput (template, expected, options) {
   template = template.join ? template.join('\n') : template;
   expected = expected.join ? expected.join('\n') : expected;
-  var actual = dummyjson.parse(template);
+  var actual = dummyjson.parse(template, options);
   assert.deepEqual(actual, expected);
 }
 
 // Asserts the output of dummyjson.parse() after it's been put through JSON.parse().
 // If the template param is an array then the contents will be joined with line-breaks to create
 // a multiline string.
-function assertJSONOutput (template, expected) {
+function assertJSONOutput (template, expected, options) {
   template = template.join ? template.join('\n') : template;
-  var actual = dummyjson.parse(template);
+  var actual = dummyjson.parse(template, options);
   assert.deepEqual(JSON.parse(actual), expected);
 }
 
@@ -112,6 +112,49 @@ describe('helpers', function () {
       ];
       assertJSONOutput(template, expected);
     });
+
+    it('should allow nested repeat blocks', function () {
+      var template = [
+        '[',
+        '  {{#repeat 2}}',
+        '  {',
+        '    "items": [',
+        '      {{#repeat 2}}',
+        '      "hello"',
+        '      {{/repeat}}',
+        '    ]',
+        '  }',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [
+        {
+          items: [
+            'hello',
+            'hello'
+          ]
+        },
+        {
+          items: [
+            'hello',
+            'hello'
+          ]
+        }
+      ];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should not repeat the contents if given zero as a number', function () {
+      var template = [
+        '[',
+        '  {{#repeat 0}}',
+        '  "hello"',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [];
+      assertJSONOutput(template, expected);
+  });
   });
 
   describe('int', function () {
@@ -145,6 +188,12 @@ describe('helpers', function () {
       var template = '{{int 0 100 round=5}}, {{int 0 100 round=10}}, {{int 0 100 round=20}}';
       var expected = '45, 40, 0';
       assertStringOutput(template, expected);
+    });
+
+    it('should be inclusive of min and max values when rounding to nearest multiples', function () {
+      var template = '{{int 5 10 round=5}}, {{int 5 10 round=5}}';
+      var expected = '10, 5';
+      assertStringOutput(template, expected, { seed: '123' });
     });
 
     it('should return an integer formatted using the format string', function () {
@@ -395,16 +444,9 @@ describe('helpers', function () {
 
   describe('zipcode', function () {
     it('should return different zipcodes when used repeatedly', function () {
-      // Temporarily set a new seed for this test so it generates values that provide
-      // sufficient code coverage
-      var originalSeed = dummyjson.seed;
-      dummyjson.seed = 'xyz1234';
-
       var template = '{{zipcode}}, {{zipcode}}, {{zipcode}}';
       var expected = '86930, 02430, 73050';
-      assertStringOutput(template, expected);
-
-      dummyjson.seed = originalSeed;
+      assertStringOutput(template, expected, { seed: 'xyz1234' });
     });
   });
 
@@ -507,7 +549,7 @@ describe('helpers', function () {
   });
 
   describe('linked helpers', function () {
-    it('should link all values when names are used first', function () {
+    it('should link all values when first name is used first', function () {
       var template = [
         '{',
         '  "firstName": "{{firstName}}",',
@@ -527,6 +569,30 @@ describe('helpers', function () {
         'tld': 'name',
         'domain': 'qualcore.name',
         'email': 'ivan.sprowl@qualcore.name'
+      };
+      assertJSONOutput(template, expected);
+    });
+
+    it('should link all values when last name is used first', function () {
+      var template = [
+        '{',
+        '  "lastName": "{{lastName}}",',
+        '  "firstName": "{{firstName}}",',
+        '  "username": "{{username}}",',
+        '  "company": "{{company}}",',
+        '  "tld": "{{tld}}",',
+        '  "domain": "{{domain}}",',
+        '  "email": "{{email}}"',
+        '}'
+      ];
+      var expected = {
+        'lastName': 'Magby',
+        'firstName': 'Darrell',
+        'username': 'dmagby',
+        'company': 'Qualcore',
+        'tld': 'name',
+        'domain': 'qualcore.name',
+        'email': 'darrell.magby@qualcore.name'
       };
       assertJSONOutput(template, expected);
     });
