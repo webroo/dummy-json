@@ -376,6 +376,18 @@ describe('helpers', function () {
       var expected = 'isprowl, lsmit, twinter';
       assertStringOutput(template, expected);
     });
+
+    it('should remove whitespace characters from names', function () {
+      var options = {
+        mockdata: {
+          firstNames: [' Philippe'],
+          lastNames: [' Le Gerrec'],
+        },
+      };
+      var template = '{{username}}';
+      var expected = 'plegerrec';
+      assertStringOutput(template, expected, options);
+    });
   });
 
   describe('company', function () {
@@ -407,6 +419,19 @@ describe('helpers', function () {
       var template = '{{email}}, {{email}}, {{email}}';
       var expected = 'ivan.sprowl@qualcore.name, theo.winter@citisys.biz, florance.krumm@dalserve.biz';
       assertStringOutput(template, expected);
+    });
+
+    it('should remove whitespace characters from names and companies', function () {
+      var options = {
+        mockdata: {
+          firstNames: ['Philippe '],
+          lastNames: [' Le Gerrec'],
+          companies: ['Uni logic'],
+        },
+      };
+      var template = '{{email}}';
+      var expected = 'philippe.legerrec@unilogic.name';
+      assertStringOutput(template, expected, options);
     });
   });
 
