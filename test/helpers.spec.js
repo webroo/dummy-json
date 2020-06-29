@@ -154,7 +154,7 @@ describe('helpers', function () {
       ];
       var expected = [];
       assertJSONOutput(template, expected);
-  });
+    });
   });
 
   describe('int', function () {
@@ -555,6 +555,12 @@ describe('helpers', function () {
     it('should return different websafe hexColors when used repeatedly', function () {
       var template = '{{hexColor websafe=true}}, {{hexColor websafe=true}}, {{hexColor websafe=true}}';
       var expected = '#666600, #996633, #339966';
+      assertStringOutput(template, expected);
+    });
+
+    it('should remove the hash symbol', function () {
+      var template = '{{hexColor withHash=false}}, {{hexColor withHash=false}}, {{hexColor withHash=false}}';
+      var expected = '6f6a18, 995f2b, 36807c';
       assertStringOutput(template, expected);
     });
   });

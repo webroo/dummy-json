@@ -439,18 +439,22 @@ Generates a random CSS color name, from a predefined list, such as "forestgreen"
 
 ### Hex color
 
-`{{hexColor [websafe=false]}}`
+`{{hexColor [websafe=false] [withHash=true]}}`
 
 * `websafe` Generates a websafe color if true (optional, default is false)
+* `withHash` Whether the color has a leading hash symbol (optional, default is true)
 
-Generates a random hexadecimal color value with leading hash symbol.
+Generates a random hexadecimal color value with an optional leading hash symbol.
 
 ```js
-// Generates a hex color with leading hash symbol
+// Generates a hex color with a leading hash symbol
 {{hexColor}} // #34D92C
 
 // Generates a websafe hex color
 {{hexColor websafe=true}} // #33CC99
+
+// Generates a hex color without a leading hash symbol
+{{hexColor withHash=false}} // 34D92C
 ```
 
 ### GUID
