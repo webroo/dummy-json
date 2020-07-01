@@ -166,22 +166,44 @@ If you install the utility globally with `npm install -g dummy-json` you can use
 
 `{{#repeat count [comma=true]}} ... {{/repeat}}`
 
-* `count` The number of times to repeat the content (required)
+`{{#repeat min=number max=number [comma=true]}} ... {{/repeat}}`
+
+* `count` The number of times to repeat the content (required, mutually exclusive with `min` and `max`)
+* `min` and `max` Repeat the content a random number of times within the range (both required, mutually exclusive with `count`)
 * `comma` Adds or removes the separating comma between blocks of content (optional, default is true)
 
-Repeats blocks of content, similar to Handlebars' built-in `each`. Can be used anywhere in your template, not just inside arrays. Automatically adds a comma and line break between blocks.
+This helper repeats blocks of content, similar to Handlebars' built-in `each`. It can be used anywhere in your template, not just inside arrays. It automatically adds a comma and line break between blocks.
+
+There are two ways in which the helper can be used, the first is to repeat a block a fixed number of times:
 
 ```js
 // Repeat the block 3 times, automatically adding a comma between blocks
-var messages = [
+"messages": [
   {{#repeat 3}}
+  "hello"
+  {{/repeat}}
+]
+
+// Output
+"messages": [
+  "hello",
+  "hello",
+  "hello"
+]
+```
+
+Or repeat the block a random number of times:
+
+```js
+// Repeat the block a random number of times between 1 and 5
+"messages": [
+  {{#repeat min=1 max=5}}
   "hello"
   {{/repeat}}
 ];
 
 // Output
-var messages = [
-  "hello",
+"messages": [
   "hello",
   "hello"
 ];
@@ -193,7 +215,7 @@ You can omit the comma and line break by using `comma=false`, for example:
 {{#repeat 3 comma=false}}hello{{/repeat}} // hellohellohello
 ```
 
-You can get the iteration position using the standard Handlebars variables `@index`, `@first`, `@last`. The total number of iterations is available using `@total`.
+You can get iteration position information inside the repeat block using the standard Handlebars variables `@index`, `@first`, `@last` and `@total`:
 
 ```js
 // Repeat the block 3 times using @index to modify the filename
@@ -209,7 +231,7 @@ You can get the iteration position using the standard Handlebars variables `@ind
 
 ### Integer
 
-`{{int min max [format] [round=1]}}`
+`{{int min max [format] [round=null]}}`
 
 * `min` Minimum value (required)
 * `max` Maximum value (required)
@@ -233,7 +255,7 @@ The output can be formatted using a numeric format string, provided by numbro. F
 
 ### Float
 
-`{{float min max [format] [round=1]}}`
+`{{float min max [format] [round=null]}}`
 
 * `min` Minimum value (required)
 * `max` Maximum value (required)
@@ -292,7 +314,7 @@ By default the output uses [Date.toString()](https://developer.mozilla.org/en-US
 * `max` Maximum value (required)
 * `format` Formatting string (optional, default is null)
 
-This is a shorthand helper for generating the time portion of a date, without needing to put the full date into the min and max values. Both `min` and `max` can be represented by any string in the 24h format `HH:mm:ss`, for example `17:48:34.`, or if you want to ignore seconds: `17:48`
+This is a shorthand helper for generating the time portion of a date, without needing to put the full date into the min and max values. Both `min` and `max` can be represented by any string in the 24h format `HH:mm:ss`, for example `17:48:34`, or if you want to ignore seconds: `17:48`
 
 By default the output uses `HH:mm`. Alternatively the output can be formatted using a format string provided by fecha. For a complete list of formatting options see [https://github.com/taylorhakes/fecha](https://github.com/taylorhakes/fecha)
 
@@ -435,7 +457,7 @@ Generates a random phone number in the format `xxx-xxx-xxxx`, for example "123-4
 
 `{{color}}`
 
-Generates a random CSS color name, from a predefined list, such as "forestgreen", "black", etc
+Generates a random CSS color name, from a predefined list, such as "forestgreen", "black", etc.
 
 ### Hex color
 

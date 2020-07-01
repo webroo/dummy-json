@@ -67,7 +67,7 @@ describe('helpers', function () {
       assertJSONOutput(template, expected);
     });
 
-    it('should repeat the contents a random number of times between the range', function () {
+    it('should repeat the contents a random number of times between the two range values', function () {
       var template = [
         '[',
         '  {{#repeat 1 5}}',
@@ -79,6 +79,52 @@ describe('helpers', function () {
         'hello',
         'hello',
         'hello'
+      ];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should repeat the contents a random number of times between the min and max values', function () {
+      var template = [
+        '[',
+        '  {{#repeat min=4 max=6}}',
+        '  "hello"',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [
+        'hello',
+        'hello',
+        'hello',
+        'hello',
+        'hello'
+      ];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should not repeat the contents a random number of times if the min and max values are negative', function () {
+      var template = [
+        '[',
+        '  {{#repeat min=-4 max=-6}}',
+        '  "hello"',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should repeat the contents a random number of times using the range values instead of min & max', function () {
+      // This is to preserve backwards compatibility for anyone using the original format: {{#repeat 2 4}}
+      var template = [
+        '[',
+        '  {{#repeat 1 3 min=4 max=6}}',
+        '  "hello"',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [
+        'hello',
+        'hello',
       ];
       assertJSONOutput(template, expected);
     });
@@ -106,6 +152,42 @@ describe('helpers', function () {
         {
           'index': 1,
           'total': 2,
+          'first': false,
+          'last': true
+        }
+      ];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should ensure the positional values inside the repeat block work with random repeat ranges', function () {
+      var template = [
+        '[',
+        '  {{#repeat min=2 max=5}}',
+        '  {',
+        '    "index": {{@index}},',
+        '    "total": {{@total}},',
+        '    "first": {{@first}},',
+        '    "last": {{@last}}',
+        '  }',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [
+        {
+          'index': 0,
+          'total': 3,
+          'first': true,
+          'last': false
+        },
+        {
+          'index': 1,
+          'total': 3,
+          'first': false,
+          'last': false
+        },
+        {
+          'index': 2,
+          'total': 3,
           'first': false,
           'last': true
         }
@@ -148,6 +230,18 @@ describe('helpers', function () {
       var template = [
         '[',
         '  {{#repeat 0}}',
+        '  "hello"',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should not repeat the contents if given a negative number', function () {
+      var template = [
+        '[',
+        '  {{#repeat -1}}',
         '  "hello"',
         '  {{/repeat}}',
         ']'
