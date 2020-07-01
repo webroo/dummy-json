@@ -565,6 +565,34 @@ describe('helpers', function () {
     });
   });
 
+  describe('char', function () {
+    it('should throw an error if not given a charset', function () {
+      var template = '{{char}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should throw an error if given more than one charset', function () {
+      var template = '{{char "ABC" "abc"}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should return one of the characters in the charset', function () {
+      var template = '{{char "ABC"}}, {{char "$€£"}}, {{char "123"}}';
+      var expected = 'B, €, 1';
+      assertStringOutput(template, expected);
+    });
+  });
+
   describe('lorem', function () {
     it('should return 25 lorem ipsum words by default', function () {
       var template = '{{lorem}}';

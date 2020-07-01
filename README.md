@@ -475,6 +475,22 @@ Generates a random IPv4 address.
 
 Generates a random IPv6 address.
 
+### Character
+
+`{{char charset}}`
+
+* `charset` String of characters to pick from (required)
+
+Generates a single character from the given character set.
+
+```js
+// Generates a random grade
+{{char "ABCDEF"}} // B
+
+// Generates a random currency symbol
+{{char "$€£¥"}} // €
+```
+
 ### Lorem ipsum
 
 `{{lorem [wordCount]}}`
