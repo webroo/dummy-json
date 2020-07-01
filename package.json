@@ -16,7 +16,7 @@
     "seedrandom": "^2.4.2"
   },
   "devDependencies": {
-    "mocha": "^6.2.2"
+    "mocha": "^8.0.1"
   },
   "main": "index.js",
   "bin": {
