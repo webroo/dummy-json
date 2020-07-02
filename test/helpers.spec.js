@@ -660,6 +660,12 @@ describe('helpers', function () {
   });
 
   describe('char', function () {
+    it('should return one of the characters in the charset', function () {
+      var template = '{{char "ABC"}}, {{char "$€£"}}, {{char "123"}}';
+      var expected = 'B, €, 1';
+      assertStringOutput(template, expected);
+    });
+    
     it('should throw an error if not given a charset', function () {
       var template = '{{char}}';
       assert.throws(
@@ -680,10 +686,14 @@ describe('helpers', function () {
       );
     });
 
-    it('should return one of the characters in the charset', function () {
-      var template = '{{char "ABC"}}, {{char "$€£"}}, {{char "123"}}';
-      var expected = 'B, €, 1';
-      assertStringOutput(template, expected);
+    it('should throw an error if given a number', function () {
+      var template = '{{char 50}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
     });
   });
 
