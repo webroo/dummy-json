@@ -129,6 +129,26 @@ describe('helpers', function () {
       assertJSONOutput(template, expected);
     });
 
+    it('should throw an error if only given a min value', function () {
+      var template = '{{#repeat min=5}}{{/repeat}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should throw an error if only given a max value', function () {
+      var template = '{{#repeat max=5}}{{/repeat}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
     it('should make positional values available inside the repeat block', function () {
       var template = [
         '[',
