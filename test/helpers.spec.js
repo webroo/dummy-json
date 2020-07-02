@@ -709,6 +709,52 @@ describe('helpers', function () {
       var expected = 'Quisque nam ut tincidunt sed. Metus euismod lacinia dolor neque.';
       assertStringOutput(template, expected);
     });
+
+    it('should return a random number of words between min and max', function () {
+      var template = '{{lorem min=10 max=20}}';
+      var expected = 'Nam ut tincidunt sed nisl. Euismod lacinia dolor neque ligula ex ipsum vehicula quisque.';
+      assertStringOutput(template, expected);
+    });
+
+    it('should throw an error if min and max are provided along with a word count', function () {
+      var template = '{{lorem 5 min=10 max=20}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should throw an error if only min is provided', function () {
+      var template = '{{lorem max=5}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should throw an error if only max is provided', function () {
+      var template = '{{lorem min=5}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should throw an error if more than two numbers are provided', function () {
+      var template = '{{lorem 5 6}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
   });
 
   describe('linked helpers', function () {
