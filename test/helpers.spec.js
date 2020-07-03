@@ -720,19 +720,19 @@ describe('helpers', function () {
   describe('lorem', function () {
     it('should return 25 lorem ipsum words by default', function () {
       var template = '{{lorem}}';
-      var expected = 'Quisque nam ut tincidunt sed. Metus euismod lacinia dolor maximus vehicula nibh. Quisque ut accumsan finibus. Sed placerat dolor in consectetur, commodo mi lobortis sed.';
+      var expected = 'Lobortis maximus mi enim velit. Eu mollis eti dolor tristique eu id. Lobortis mi elementum vel. Nam faucibus dolor felis adipiscing, au laoreet purus velit.';
       assertStringOutput(template, expected);
     });
 
     it('should return the specified number of lorem ipsum words', function () {
       var template = '{{lorem 10}}';
-      var expected = 'Quisque nam ut tincidunt sed. Metus euismod lacinia dolor neque.';
+      var expected = 'Lobortis maximus mi enim velit. Eu mollis eti dolor orci.';
       assertStringOutput(template, expected);
     });
 
     it('should return a random number of words between min and max', function () {
       var template = '{{lorem min=10 max=20}}';
-      var expected = 'Nam ut tincidunt sed nisl. Euismod lacinia dolor neque ligula ex ipsum vehicula quisque.';
+      var expected = 'Maximus mi enim velit auctor. Mollis eti dolor orci est augue dolor porttitor lobortis.';
       assertStringOutput(template, expected);
     });
 
