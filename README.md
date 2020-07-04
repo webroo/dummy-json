@@ -577,6 +577,73 @@ Converts the output of any string-based helper to uppercase. This uses the Handl
 {{uppercase (city)}} // BOSTON
 ```
 
+### Add
+
+`{{add number1 number2}}`
+
+* `number1` First number to add
+* `number2` Second number to add
+
+Adds the two numbers together. This can be useful in creating 1-based indexes inside repeat blocks using the `@index` variable (which is normally zero-based).
+
+```js
+// The built-in @index variable is zero-based but we can add 1 to it
+"images": [
+  {{#repeat 3}}
+  "image{{add @index 1}}.jpg"
+  {{/repeat}}
+]
+
+// Output
+"images": [
+  "image1.jpg",
+  "image2.jpg",
+  "image3.jpg"
+]
+```
+
+### Step
+
+`{{step increment}}`
+
+* `increment` How much to increment the generated index on each iteration
+
+Creates stepped indexes inside repeat blocks. (Note: this uses the `@index` internally and so can only be used inside `{{#repeat}}` and `{{#each}}` blocks).
+
+```js
+// Increment the image index by 10 each time
+"images": [
+  {{#repeat 3}}
+  "image{{step 10}}.jpg"
+  {{/repeat}}
+]
+
+// Output
+"images": [
+  "image0.jpg",
+  "image10.jpg",
+  "image20.jpg"
+]
+```
+
+You can use this in conjunction with the [Add](#add) helper and [subexpression syntax](http://handlebarsjs.com/expressions.html#subexpressions) to create indexes that start at higher values, for example:
+
+```js
+// Increment the image index by 10 each time, starting at 1000
+"images": [
+  {{#repeat 3}}
+  "image{{add (step 10) 1000}}.jpg"
+  {{/repeat}}
+]
+
+// Output
+"images": [
+  "image1000.jpg",
+  "image1010.jpg",
+  "image1020.jpg"
+]
+```
+
 ## Synchronized helpers
 
 Several helpers, such as name and email, are linked together in order to synchronize their values. This gives the random data some continuity. Synchronization happens automatically and doesn't require any additional work, for example:

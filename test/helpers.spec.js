@@ -1179,6 +1179,71 @@ describe('helpers', function () {
     });
   });
 
+  describe('step', function () {
+    it('should generate stepped numbers inside a repeat block', function () {
+      var template = [
+        '[',
+        '  {{#repeat 3}}',
+        '  {{step 10}}',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [
+        '0',
+        '10',
+        '20'
+      ];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should generate negative stepped numbers inside a repeat block', function () {
+      var template = [
+        '[',
+        '  {{#repeat 3}}',
+        '  {{step -10}}',
+        '  {{/repeat}}',
+        ']'
+      ];
+      var expected = [
+        '0',
+        '-10',
+        '-20'
+      ];
+      assertJSONOutput(template, expected);
+    });
+
+    it('should generate stepped numbers inside an each block', function () {
+      var template = '{{#each things}}{{step 10}} {{/each}}';
+      var expected = '0 10 20 ';
+      var options = {
+        mockdata: {
+          things: ['a', 'b', 'c'],
+        },
+      };
+      assertStringOutput(template, expected, options);
+    });
+
+    it('should throw an error if no params are provided', function () {
+      var template = '{{step}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+
+    it('should throw an error if used outside of a repeat or each block', function () {
+      var template = '{{step 10}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+  });
+
   describe('subexpression helpers', function () {
     describe('lowercase', function () {
       it('should change the given value to lowercase', function () {
@@ -1193,6 +1258,64 @@ describe('helpers', function () {
         var template = '{{uppercase (firstName)}}';
         var expected = 'IVAN';
         assertStringOutput(template, expected);
+      });
+    });
+
+    describe('add', function () {
+      it('should add two numbers together', function () {
+        var template = '{{add 1 2}}';
+        var expected = '3';
+        assertStringOutput(template, expected);
+      });
+
+      it('should be able to use the @index from a repeat block', function () {
+        var template = [
+          '[',
+          '  {{#repeat 2}}',
+          '  {{add @index 10}}',
+          '  {{/repeat}}',
+          ']'
+        ];
+        var expected = [
+          '10',
+          '11'
+        ];
+        assertJSONOutput(template, expected);
+      });
+
+      it('should be able to use in conjunction with the step helper', function () {
+        var template = [
+          '[',
+          '  {{#repeat 2}}',
+          '  {{add 100 (step 20)}}',
+          '  {{/repeat}}',
+          ']'
+        ];
+        var expected = [
+          '100',
+          '120'
+        ];
+        assertJSONOutput(template, expected);
+      });
+
+      it('should throw an error if no params are provided', function () {
+        var template = '{{add}}';
+        assert.throws(
+          function () {
+            dummyjson.parse(template);
+          },
+          Error
+        );
+      });
+
+      it('should throw an error if only one param is provided', function () {
+        var template = '{{add 1}}';
+        assert.throws(
+          function () {
+            dummyjson.parse(template);
+          },
+          Error
+        );
       });
     });
   });
