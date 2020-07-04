@@ -75,8 +75,8 @@ Please view the following example on the [github page](https://github.com/webroo
     "img2.png"
   ],
   "coordinates": {
-  	"x": 35.12,
-  	"y": -21.49
+    "x": 35.12,
+    "y": -21.49
   },
   "price": "$59,395"
 }
@@ -89,64 +89,52 @@ Install via npm:
 
     npm install dummy-json
 
-### API
-
-`dummyjson.parse(template, {options})` Parses the given template and returns a string
-
-* `template` Handlebars template string
-* `options` Options object containing any of the following properties:
-  * `helpers` Custom helpers (see [Writing your own helpers](#writing-your-own-helpers))
-  * `mockdata` Custom mockdata (see [Advanced usage](#advanced-usage))
-  * `partials` Custom Handlebars partials (see [Advanced usage](#advanced-usage))
-  * `seed` Seed for the random number generator (see [Seeded random data](#seeded-random-data))
-
-#### Generate JSON string
+#### Generate a JSON string
 
 ```js
-var dummyjson = require('dummy-json');
-var template = '{\
-	"name": {{firstName}},\
-	"age": {{int 18 65}}\
-  }';
-var result = dummyjson.parse(template); // Returns a string
+const dummyjson = require('dummy-json');
+
+const template = `{
+  "name": {{firstName}},
+  "age": {{int 18 65}}
+}`;
+const result = dummyjson.parse(template); // Returns a string
 ```
 
-Note: if you're using ES6 you can write multi-line strings using [template strings](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/template_strings).
+#### Generate from a template file
 
-#### Generate from a file
-
-Instead of writing multi-line strings in Javascript you can load the template from a file using Node's `fs` utility:
+Instead of using template strings directly in your code you can create a template file and load it using Node's `fs` utility:
 
 ```js
-var fs = require('fs');
-var dummyjson = require('./dummy-json');
+const fs = require('fs');
+const dummyjson = require('dummy-json');
 
-var template = fs.readFileSync('template.hbs', {encoding: 'utf8'});
-var result = dummyjson.parse(template);
+const template = fs.readFileSync('mytemplate.hbs', { encoding: 'utf8' });
+const result = dummyjson.parse(template);
 ```
 
-#### Converting to JavaScript object
+#### Converting the generated string to a JavaScript object
 
-If the output string is properly formatted it can be parsed into a JavaScript object:
+If the generated output is properly formatted it can be parsed into a JavaScript object (if not then JSON.parse will throw an error):
 
 ```js
-var result = dummyjson.parse(template);
-var obj = JSON.parse(result);
+const result = dummyjson.parse(template);
+const obj = JSON.parse(result);
 ```
 
-#### Using with a HTTP response
+#### Create a dummy API endpoint
 
-A common use of Dummy JSON is to create a mock API service that returns random data. Here's a quick example using Express:
+A common use of Dummy JSON is to create a mock API endpoint that returns random data. Here's a quick example using Express:
 
 ```js
-var fs = require('fs');
-var express = require('express');
-var dummyjson = require('./dummy-json');
+const fs = require('fs');
+const express = require('express');
+const dummyjson = require('./dummy-json');
 
-var template = fs.readFileSync('template.hbs', {encoding: 'utf8'});
-var app = express();
+const template = fs.readFileSync('template.hbs', { encoding: 'utf8' });
+const app = express();
 
-app.get('/people', function(req, res) {
+app.get('/api/people', function(req, res) {
   res.set('Content-Type', 'application/json');
   res.send(dummyjson.parse(template));
 });
@@ -156,9 +144,20 @@ app.listen(3000);
 
 #### Command line iterface
 
-If you install the utility globally with `npm install -g dummy-json` you can use it from the command line to parse files:
+If you install Dummy JSON globally with `npm install -g dummy-json` you can use it from the command line. Dummy JSON will write to stdout by default but you can redirect to a file like so:
 
 	dummyjson template.hbs > output.json
+
+## API
+
+`dummyjson.parse(template: string, options: {}): string`
+
+* `template` Handlebars template string
+* `options` Options object containing any of the following properties:
+  * `helpers` Custom helpers (see [Writing your own helpers](#writing-your-own-helpers))
+  * `mockdata` Custom mockdata (see [Advanced usage](#advanced-usage))
+  * `partials` Custom Handlebars partials (see [Advanced usage](#advanced-usage))
+  * `seed` Seed for the random number generator (see [Seeded random data](#seeded-random-data))
 
 ## Available helpers
 
@@ -683,11 +682,11 @@ The following helpers synchronize their values:
 If you want to use a different set of names or addresses then you can override the built-in data using the `mockdata` option:
 
 ```js
-var myMockdata = {
+const myMockdata = {
   firstNames: ['Bob', 'Jane', 'Carl', 'Joan'],
   lastNames: ['Smith', 'Jones', 'Wallis', 'Gilmore']
 };
-var result = dummyjson.parse(template, {mockdata: myMockdata});
+const result = dummyjson.parse(template, { mockdata: myMockdata });
 ```
 
 The following arrays are available to override:
@@ -707,14 +706,14 @@ The following arrays are available to override:
 To write your own helpers you need to create an object map of helper methods and pass it to the `options` param of `parse()`, for example:
 
 ```js
-var myHelpers = {
-  direction: function() {
+const myHelpers = {
+  direction() {
     // Use dummyjson random to ensure the seeded random number generator is used
     return dummyjson.utils.random() > 0.5 ? 'left' : 'right';
   }
 };
-var template = '{{direction}}';
-var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "left"
+const template = '{{direction}}';
+const result = dummyjson.parse(template, { helpers: myHelpers }); // Returns "left"
 ```
 
 Your own helpers will be mixed with the built-in helpers, allowing you to use both in your template.
@@ -728,14 +727,14 @@ When generating data using random numbers you should always use the `dummyjson.u
 One of the most common types of helper is one that pulls a random item from an array. You can use the following example as a basis for you own:
 
 ```js
-var myHelpers = {
-  orientation: function() {
+const myHelpers = {
+  orientation() {
     // Use randomArrayItem to ensure the seeded random number generator is used
     return dummyjson.utils.randomArrayItem(['North', 'South', 'East', 'West']);
   }
 };
-var template = '{{orientation}}';
-var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "East"
+const template = '{{orientation}}';
+const result = dummyjson.parse(template, { helpers: myHelpers }); // Returns "East"
 ```
 
 ## Seeded random data
@@ -743,17 +742,17 @@ var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "East"
 By default dummyjson generates different results every time it's run. If you need repeatable dummy data then you can set a global seed for the pseudo random number generator:
 
 ```js
-// Set the seed, can be any string value
+// Set the global seed, can be any string value
 dummyjson.seed = 'helloworld';
 
 // Every subsequent call to parse() will now generate the same output
-var result = dummyjson.parse(string);
+const result = dummyjson.parse(string);
 ```
 
 Alternatively you can set a one-time seed for a specific `parse()` call:
 
 ```js
-var result = dummyjson.parse(string, {seed: 'abc123'});
+const result = dummyjson.parse(string, { seed: 'abc123' });
 ```
 
 A one-time seed will not overwrite the global `dummyjson.seed`, meaning subsequent calls to `parse()` without a seed will use the original `dummyjson.seed` value.
@@ -774,8 +773,8 @@ To ensure your own helpers use the random seed you must use the `dummyjson.utils
 For example:
 
 ```js
-var myHelpers = {
-  temperature: function() {
+const myHelpers = {
+  temperature() {
     return dummyjson.utils.randomInt(0, 100) + '°C';
   }
 };
@@ -788,13 +787,13 @@ var myHelpers = {
 You can replace any of the built-in helpers by simply creating your own with the same name:
 
 ```js
-var myHelpers = {
-  postcode: function() {
+const myHelpers = {
+  postcode() {
     // This version of {{postcode}} will now be used instead of the built-in one
     return 'helloworld';
   }
 };
-var result = dummyjson.parse(template, {helpers: myHelpers});
+const result = dummyjson.parse(template, { helpers: myHelpers });
 ```
 
 Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described above in [Using your own data](#using-your-own-data).
@@ -804,21 +803,21 @@ Note: If you replace any of the synchronized helpers then you will lose the sync
 The `mockdata` option can also be used to insert other data, like primitive values:
 
 ```js
-var myMockdata = {
+const myMockdata = {
   copyright: 'Copyright Myself 2015'
 };
-var template = '{{copyright}}';
-var result = dummyjson.parse(template, {mockdata: myMockdata}); // Returns "Copyright Myself 2015"
+const template = '{{copyright}}';
+const result = dummyjson.parse(template, { mockdata: myMockdata }); // Returns "Copyright Myself 2015"
 ```
 
 Or arrays which you can loop over using Handlebar's [each helper](http://handlebarsjs.com/builtin_helpers.html#iteration):
 
 ```js
-var myMockdata = {
+const myMockdata = {
   animals: ['fox', 'badger', 'crow']
 };
-var template = '{{#each animals}}{{this}} {{/each}}';
-var result = dummyjson.parse(template, {mockdata: myMockdata}); // Returns "fox badger crow"
+const template = '{{#each animals}}{{this}} {{/each}}';
+const result = dummyjson.parse(template, { mockdata: myMockdata }); // Returns "fox badger crow"
 ```
 
 ### Using built-in helpers inside your own helpers
@@ -826,14 +825,14 @@ var result = dummyjson.parse(template, {mockdata: myMockdata}); // Returns "fox 
 All the built-in helpers are available for you to use in your own helpers. They are available in `dummyjson.helpers`. Here's an example of using two existing helpers to make a new one:
 
 ```js
-var myHelpers = {
-  fullname: function(options) {
+const myHelpers = {
+  fullname(options) {
     // You must always forward the options argument to built-in helpers
     return dummyjson.helpers.firstName(options) + ' ' + dummyjson.helpers.lastName(options);
   }
 };
-var template = '{{fullname}}';
-var result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "Ivan Young"
+const template = '{{fullname}}';
+const result = dummyjson.parse(template, {helpers: myHelpers}); // Returns "Ivan Young"
 ```
 
 As mentioned in the comment above you must always forward the `options` argument to built-in helpers. The `options` argument is automatically given to all helpers by Handlebars, and is always passed as the last argument. See the [Handlebars documentation](http://handlebarsjs.com/block_helpers.html) for more information.
@@ -843,7 +842,7 @@ As mentioned in the comment above you must always forward the `options` argument
 You can use Handlebars partials to encapsulate content into a reusable blocks. Partials are passed via the `options` param of `parse()`.
 
 ```js
-var myPartials = {
+const myPartials = {
   user: '{\
     "id": {{@index}},\
     "firstName": "{{firstName}}",\
@@ -852,7 +851,7 @@ var myPartials = {
   }'
 };
 
-var template = '{\
+const template = '{\
     "users": [\
       {{#repeat 3}}\
         {{> user}}\
@@ -860,7 +859,7 @@ var template = '{\
     ]\
   }';
 
-var result = dummyjson.parse(template, {partials: myPartials});
+const result = dummyjson.parse(template, { partials: myPartials });
 ```
 
 ## Upgrading from 0.0.x releases to 1.0.0
