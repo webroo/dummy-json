@@ -326,6 +326,22 @@ By default the output uses `HH:mm`. Alternatively the output can be formatted us
 {{time '09:00' '17:30' 'h:mm a'}} // 2:08 pm
 ```
 
+### Random item
+
+`{{random ...items}}`
+
+* `items` One or more strings or numbers from which to pick a random value (required)
+
+Picks a random item from the given parameters. This is a convenient way to create small, inline random lists of your own. For more lengthy lists it might be easier to use [Array-based helpers](#array-based-helpers).
+
+```js
+// The random helper will pick one of the provided strings
+{{random 'North' 'South' 'East' 'West'}} // 'South'
+
+// You can also provide numbers
+{{random 50 100 150 200}} // 150
+```
+
 ### Boolean
 
 `{{boolean}}`

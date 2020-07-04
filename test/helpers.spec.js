@@ -1149,6 +1149,36 @@ describe('helpers', function () {
     });
   });
 
+  describe('random', function () {
+    it('should return a random item from the given string params', function () {
+      var template = '{{random "North" "South" "East" "West"}}';
+      var expected = 'South';
+      assertStringOutput(template, expected);
+    });
+
+    it('should return a random item from the given number params', function () {
+      var template = '{{random 10 20 30 40}}';
+      var expected = '20';
+      assertStringOutput(template, expected);
+    });
+
+    it('should return a single item', function () {
+      var template = '{{random "North"}}';
+      var expected = 'North';
+      assertStringOutput(template, expected);
+    });
+
+    it('should throw an error if no params are provided', function () {
+      var template = '{{random}}';
+      assert.throws(
+        function () {
+          dummyjson.parse(template);
+        },
+        Error
+      );
+    });
+  });
+
   describe('subexpression helpers', function () {
     describe('lowercase', function () {
       it('should change the given value to lowercase', function () {
