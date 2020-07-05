@@ -19,6 +19,7 @@
     "mocha": "^8.0.1"
   },
   "main": "index.js",
+  "types": "index.d.ts",
   "bin": {
     "dummyjson": "cli.js"
   },
