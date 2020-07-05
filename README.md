@@ -557,7 +557,7 @@ There are two ways this helper can be used. Both generate random sentences of lo
 
 * `helper` Any helper that returns a string (required)
 
-Converts the output of any string-based helper to lowercase. This uses the Handlebars' [subexpression syntax](http://handlebarsjs.com/expressions.html#subexpressions).
+Converts the output of any string-based helper to lowercase. This uses the Handlebars' [subexpression syntax](https://handlebarsjs.com/guide/expressions.html#subexpressions).
 
 ```js
 // Change firstName to lowercase
@@ -573,7 +573,7 @@ Converts the output of any string-based helper to lowercase. This uses the Handl
 
 * `helper` Any helper that returns a string (required)
 
-Converts the output of any string-based helper to uppercase. This uses the Handlebars' [subexpression syntax](http://handlebarsjs.com/expressions.html#subexpressions).
+Converts the output of any string-based helper to uppercase. This uses the Handlebars' [subexpression syntax](https://handlebarsjs.com/guide/expressions.html#subexpressions).
 
 ```js
 // Change firstName to uppercase
@@ -632,7 +632,7 @@ Creates a numeric step inside a repeat block that is a multiple of the index. (N
 ]
 ```
 
-You can use this in conjunction with the [Add](#add) helper and [subexpression syntax](http://handlebarsjs.com/expressions.html#subexpressions) to create indexes that start at higher values:
+You can use this in conjunction with the [Add](#add) helper and [subexpression syntax](https://handlebarsjs.com/guide/expressions.html#subexpressions) to create indexes that start at higher values:
 
 ```js
 // Increment the image index by 10 each time, starting at 1000
@@ -701,7 +701,7 @@ const result = dummyjson.parse(template, { helpers: myHelpers }); // Returns "le
 
 Your own helpers will be mixed with the built-in helpers, allowing you to use both in your template.
 
-The helpers use the same syntax as regular Handlebars helpers, but instead of registering them with `Handlebars.registerHelper()` you pass them to `dummyjson.parse()`. For more information on writing helpers see the [Handlebars documentation](http://handlebarsjs.com/block_helpers.html).
+The helpers use the same syntax as regular Handlebars helpers, but instead of registering them with `Handlebars.registerHelper()` you pass them to `dummyjson.parse()`. For more information on writing helpers see the [Handlebars documentation](https://handlebarsjs.com/guide/block-helpers.html).
 
 Note: when generating data using random numbers you should always use the `dummyjson.utils` module. This ensures you're using the seeded random number generator and means your results will be repeatable if you ever decide to use a seed. See the section on [Seeded random data](#seeded-random-data) for more information and a complete list of methods available in `dummyjson.utils`.
 
@@ -809,7 +809,7 @@ const template = '{{copyright}}';
 const result = dummyjson.parse(template, { mockdata: myMockdata }); // Returns "Copyright Myself 2015"
 ```
 
-Or arrays which you can loop over using Handlebar's [each helper](http://handlebarsjs.com/builtin_helpers.html#iteration):
+Or arrays which you can loop over using Handlebar's [each helper](https://handlebarsjs.com/guide/builtin-helpers.html#each):
 
 ```js
 const myMockdata = {
@@ -834,7 +834,7 @@ const template = '{{fullname}}';
 const result = dummyjson.parse(template, { helpers: myHelpers }); // Returns "Ivan Young"
 ```
 
-As mentioned in the comment above you must always forward the `options` argument to built-in helpers. The `options` argument is automatically given to all helpers by Handlebars, and is always passed as the last argument. See the [Handlebars documentation](http://handlebarsjs.com/block_helpers.html) for more information.
+As mentioned in the comment above you must always forward the `options` argument to built-in helpers. The `options` argument is automatically given to all helpers by Handlebars, and is always passed as the last argument. See the [Handlebars documentation](https://handlebarsjs.com/guide/block-helpers.html) for more information.
 
 ### Using your own partials
 
