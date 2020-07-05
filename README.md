@@ -8,6 +8,7 @@ Dummy JSON is a Node utility that allows you to generate random JSON data using 
 * [Replacing default mock data](#replacing-default-mock-data)
 * [Seeded random data](#seeded-random-data)
 * [Advanced usage](#advanced-usage)
+* [API](#api)
 
 ## Example
 
@@ -95,8 +96,8 @@ Install via npm:
 const dummyjson = require('dummy-json');
 
 const template = `{
-  "name": {{firstName}},
-  "age": {{int 18 65}}
+  "name": "{{firstName}}",
+  "age": "{{int 18 65}}"
 }`;
 const result = dummyjson.parse(template); // Returns a string
 ```
@@ -115,7 +116,7 @@ const result = dummyjson.parse(template);
 
 #### Converting the generated string to a JavaScript object
 
-If the generated output is properly formatted it can be parsed into a JavaScript object:
+If the generated output is a valid JSON string then it can be parsed into a JavaScript object:
 
 ```js
 const result = dummyjson.parse(template);
@@ -136,7 +137,7 @@ const app = express();
 
 app.get('/api/people', function(req, res) {
   res.set('Content-Type', 'application/json');
-  res.send(dummyjson.parse(template));
+  res.status(200).json(dummyjson.parse(template));
 });
 
 app.listen(3000);
@@ -147,17 +148,6 @@ app.listen(3000);
 If you install Dummy JSON globally with `npm install -g dummy-json` you can use it from the command line. Dummy JSON will write to stdout by default but you can redirect to a file like so:
 
 	dummyjson template.hbs > output.json
-
-### Dummy JSON API
-
-`dummyjson.parse(template: string, options: {}): string`
-
-* `template: string` Handlebars template string
-* `options: {}` Options object containing any of the following properties:
-  * `helpers: {}` Object map of custom helper functions (see [Writing your own helpers](#writing-your-own-helpers))
-  * `mockdata: {}` Object map of mockdata (see [Replacing default mock data](#replacing-default-mock-data))
-  * `partials: {}` Object map of custom partials (see [Using your own partials](#using-your-own-partials))
-  * `seed: string` Seed for the random number generator (see [Seeded random data](#seeded-random-data))
 
 ## Available helpers
 
@@ -333,7 +323,7 @@ By default the output uses `HH:mm`. Alternatively the output can be formatted us
 
 `{{random ...items}}`
 
-* `items` One or more parameters from which to pick a random value (required, must be a string or number)
+* `items` One or more parameters from which to pick a random item (required, must be a string or number)
 
 Picks a random item from the given parameters. This is a convenient way to create small, inline random lists of your own. For more lengthy lists, or ones you wish to reuse, see the section on [Helpers that pick a random item from an array](#helpers-that-pick-a-random-item-from-an-array).
 
@@ -414,9 +404,11 @@ Generates a random country name, from a predefined list based on [ISO 3166-1](ht
 If you want to export the entire list then you can use the following snippet in your template:
 
 ```js
-{{#each countries}}
-"name": "{{this}}"
-{{/each}}
+"countries": [
+  {{#each countries}}
+  "{{this}}"
+  {{/each}}
+]
 ```
 
 ### Country code
@@ -428,9 +420,11 @@ Generates a random 2-character country code, from a predefined list based on [IS
 If you want to export the entire list then you can use the following snippet in your template:
 
 ```js
-{{#each countryCodes}}
-"code": "{{this}}"
-{{/each}}
+"countryCodes": [
+  {{#each countryCodes}}
+  "{{this}}"
+  {{/each}}
+]
 ```
 ### Zipcode
 
@@ -522,7 +516,7 @@ Generates a random IPv6 address.
 
 * `charset` String of characters to pick from (required)
 
-Generates a single character from the given character set.
+Picks a single character from the given character set.
 
 ```js
 // Generates a random grade
@@ -618,7 +612,7 @@ Adds the two numbers together. This can be useful in creating 1-based indexes in
 
 * `increment` How much to increment the generated index on each iteration (required)
 
-Creates a numeric step inside a repeat block that is a multiple of the index. (Note: this uses the `@index` internally and so can only be used inside `{{#repeat}}` and `{{#each}}` blocks).
+Creates a numeric step inside a repeat block that is a multiple of the index. (Note: this uses the `@index` variable internally and so can only be used inside `{{#repeat}}` and `{{#each}}` blocks).
 
 ```js
 // Increment the image index by 10 each time
@@ -656,7 +650,7 @@ You can use this in conjunction with the [Add](#add) helper and [subexpression s
 
 ## A note on synchronized helpers
 
-Several helpers, such as name and email, are linked together in order to synchronize their values. This gives the random data some continuity when used inside repeated blocks (although synchronization still occurs outside of repeated blocks). Synchronization happens automatically and doesn't require any additional work, for example:
+Several helpers, such as name and email, are linked together in order to synchronize their values. This gives the random data some continuity when used inside repeated blocks (although synchronization still occurs outside of repeat blocks). Synchronization happens automatically and doesn't require any additional work, for example:
 
 ```js
 "firstName": "{{firstName}}", // Michael
@@ -711,7 +705,7 @@ Note: when generating data using random numbers you should always use the `dummy
 
 ### Helpers that pick a random item from an array
 
-One of the most common types of helper is one that picks a random item from an array. If you are only dealing with a small number of items and don't need to reuse the helper consider using the inline [Random](#random) helper, like so:
+One of the most common types of helper is one that picks a random item from an array. If you are only dealing with a small number of items and don't need to reuse the helper consider using the inline [Random item](#random-item) helper, like so:
 
 ```js
 {{random 'North' 'South' 'East' 'West'}} // Will randomly pick on of the four values
@@ -736,7 +730,7 @@ If you want to use a different set of names, addresses, colors and so on, then y
 
 ```js
 const myMockdata = {
-  // All the possible arrays you can replace:
+  // These are all the possible arrays you can replace:
   firstNames: ['Bob', 'Jane', 'Carl', 'Joan'],
   lastNames: ['Smith', 'Jones', 'Wallis', 'Gilmore'],
   companies: ['Apple', 'Microsoft'],
@@ -772,22 +766,12 @@ Note: a one-time seed will not overwrite the global `dummyjson.seed`, meaning su
 
 ### Ensuring your own helpers use the seed
 
-To ensure your own helpers generate repeatable data you must use the functions from the `dummyjson.utils` module whenever you want a random value. The following methods are available to you:
-
-* `dummyjson.utils`
-  * `.random()` Generates a random float in the range [0, 1). Use this instead of `Math.random()`
-  * `.randomInt(min, max)` Generates a random integer in the range [min, max]
-  * `.randomFloat(min, max)` Generates a random float in the range [min, max)
-  * `.randomBoolean()` Generates a random boolean (true or false)
-  * `.randomDate(min, max)` Generates a random `Date` between the given min/max millisecond values
-  * `.randomArrayItem(array)` Returns a random item from the given `array`
-  * `.randomChar(charset)` Returns a random char from the given `charset` string
-
-For example:
+To ensure your own helpers generate repeatable data you must use the functions from the `dummyjson.utils` module whenever you want a random value. See the [API](#api) section for a complete list of functions.
 
 ```js
 const myHelpers = {
   temperature() {
+    // Using randomInt() guarantees reproducible results when using a seed
     return dummyjson.utils.randomInt(0, 100) + '°C';
   }
 };
@@ -813,7 +797,7 @@ Note: If you replace any of the synchronized helpers then you will lose the sync
 
 ### Using other static data
 
-The `mockdata` option can also be used to insert static data that you can use in your template:
+The `mockdata` option can also be used to insert static data for use in your template:
 
 ```js
 const myMockdata = {
@@ -874,3 +858,28 @@ const template = '{\
 
 const result = dummyjson.parse(template, { partials: myPartials });
 ```
+
+## API
+
+#### Parse
+
+`dummyjson.parse(template: string, options: ParseOptions): string`
+
+* `template: string` Handlebars template string
+* `options: ParseOptions` Options object containing any of the following properties:
+  * `helpers: {}` Object map of custom helper functions (see [Writing your own helpers](#writing-your-own-helpers))
+  * `mockdata: {}` Object map of mockdata (see [Replacing default mock data](#replacing-default-mock-data))
+  * `partials: {}` Object map of custom partials (see [Using your own partials](#using-your-own-partials))
+  * `seed: string` Seed for the random number generator (see [Seeded random data](#seeded-random-data))
+
+#### Utils
+
+`dummyjson.utils`
+
+  * `.random()` Returns a random float in the range [0, 1). Use this instead of `Math.random()`
+  * `.randomInt(min: number, max: number): number` Returns a random integer in the range [min, max]
+  * `.randomFloat(min: number, max: number): number` Returns a random float in the range [min, max)
+  * `.randomBoolean(): boolean` Returns a random boolean
+  * `.randomDate(min: number, max: number): Date` Returns a random date between min/max millisecond values
+  * `.randomArrayItem(array: any[]): any` Returns a random item from the given `array`
+  * `.randomChar(charset: string): string` Returns a random char from the given `charset`
