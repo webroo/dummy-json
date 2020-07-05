@@ -137,7 +137,7 @@ const app = express();
 
 app.get('/api/people', function(req, res) {
   res.set('Content-Type', 'application/json');
-  res.status(200).json(dummyjson.parse(template));
+  res.status(200).send(dummyjson.parse(template));
 });
 
 app.listen(3000);
@@ -157,13 +157,14 @@ This library uses custom Handlebars helpers to generate the random data. Handleb
 
 `{{#repeat count [comma=true]}} ... {{/repeat}}`
 
-* `count` The number of times to repeat the content (required)
-* `comma` Adds or removes the separating comma between blocks of content (optional, default is true)
+* `count: number` The number of times to repeat the content (required)
+* `comma?: boolean` Add or remove the separating comma between blocks of content (optional, default is true)
 
 `{{#repeat min=number max=number [comma=true]}} ... {{/repeat}}`
 
-* `min` & `max` Repeat the content a random number of times within the range (both required)
-* `comma` Adds or removes the separating comma between blocks of content (optional, default is true)
+* `min: number` Minimum range for the random repeat count (required)
+* `max: number` Maximum range for the random repeat count (required)
+* `comma?: boolean` Add or remove the separating comma between blocks of content (optional, default is true)
 
 There are two ways in which this helper can be used. Both repeat blocks of content, similar to Handlebars' built-in `each`, and can be used anywhere in your template, not just inside arrays. It automatically adds a comma between repeated blocks unless specified.
 
@@ -226,10 +227,10 @@ You can get iteration position information inside the repeat block using the sta
 
 `{{int min max [format] [round=null]}}`
 
-* `min` Minimum value (required)
-* `max` Maximum value (required)
-* `format` Formatting string (optional, default is null)
-* `round` Rounds to the nearest multiple of the given value (optional, default is null - no rounding)
+* `min: number` Minimum value (required)
+* `max: number` Maximum value (required)
+* `format?: string` Formatting string (optional, default is null)
+* `round?: number` Rounds to the nearest multiple of the value (optional, default is no rounding)
 
 Generates a random integer from `min` (inclusive) up to and including `max` (inclusive). The optional `round` parameter will round the number to the nearest multiple of the given value.
 
@@ -250,10 +251,10 @@ The output can be formatted using a numeric format string, provided by numbro. F
 
 `{{float min max [format] [round=null]}}`
 
-* `min` Minimum value (required)
-* `max` Maximum value (required)
-* `format` Formatting string (optional, default is null)
-* `round` Rounds to the nearest multiple of the given value (optional, default is null - no rounding)
+* `min: number` Minimum value (required)
+* `max: number` Maximum value (required)
+* `format?: string` Formatting string (optional, default is null)
+* `round?: number` Rounds to the nearest multiple of the value (optional, default is no rounding)
 
 Generates a random floating point number from `min` (inclusive) up to but excluding `max` (exclusive). The optional `round` parameter will round the number to the nearest multiple of the given value.
 
@@ -274,9 +275,9 @@ The output can be formatted using a numeric format string, provided by numbro. F
 
 `{{date min max [format]}}`
 
-* `min` Minimum value (required)
-* `max` Maximum value (required)
-* `format` Formatting string (optional, default is null)
+* `min: number` Minimum value (required)
+* `max: number` Maximum value (required)
+* `format?: string` Formatting string (optional, default is null)
 
 Generates a random date between the two values. Both `min` and `max` can be represented by any string that the [Date.parse()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse) method accepts.
 
@@ -303,9 +304,9 @@ By default the output uses [Date.toString()](https://developer.mozilla.org/en-US
 
 `{{time min max [format]}}`
 
-* `min` Minimum value (required)
-* `max` Maximum value (required)
-* `format` Formatting string (optional, default is null)
+* `min: number` Minimum value (required)
+* `max: number` Maximum value (required)
+* `format?: string` Formatting string (optional, default is null)
 
 This is a shorthand helper for generating the time portion of a date, without needing to put the full date into the min and max values. Both `min` and `max` can be represented by any string in the 24h format `HH:mm:ss`, for example `17:48:34`, or if you want to ignore seconds: `17:48`
 
@@ -323,7 +324,7 @@ By default the output uses `HH:mm`. Alternatively the output can be formatted us
 
 `{{random ...items}}`
 
-* `items` One or more parameters from which to pick a random item (required, must be a string or number)
+* `items: (string | number)[]` One or more parameters from which to pick a random item (required)
 
 Picks a random item from the given parameters. This is a convenient way to create small, inline random lists of your own. For more lengthy lists, or ones you wish to reuse, see the section on [Helpers that pick a random item from an array](#helpers-that-pick-a-random-item-from-an-array).
 
@@ -454,7 +455,7 @@ Generates a random longitude from -180 to +180, to 6 decimal places (roughly 10c
 
 `{{phone [format]}}`
 
-* `format` Formatting string (optional, default is `xxx-xxx-xxxx`)
+* `format?: string` Formatting string (optional, default is `xxx-xxx-xxxx`)
 
 Generates a random phone number in the format `xxx-xxx-xxxx`, for example "123-456-7890". To use a different format pass a string to the `format` parameter containing a series of lowercase "x" characters for each random integer.
 
@@ -476,8 +477,8 @@ Generates a random CSS color name, from a predefined list, such as "forestgreen"
 
 `{{hexColor [websafe=false] [withHash=true]}}`
 
-* `websafe` Generates a websafe color if true (optional, default is false)
-* `withHash` Whether the color has a leading hash symbol (optional, default is true)
+* `websafe?: boolean` Generates a websafe color if true (optional, default is false)
+* `withHash?: boolean` Whether the color has a leading hash symbol (optional, default is true)
 
 Generates a random hexadecimal color value with an optional leading hash symbol.
 
@@ -514,7 +515,7 @@ Generates a random IPv6 address.
 
 `{{char charset}}`
 
-* `charset` String of characters to pick from (required)
+* `charset: string` String of characters to pick from (required)
 
 Picks a single character from the given character set.
 
@@ -530,11 +531,12 @@ Picks a single character from the given character set.
 
 `{{lorem [wordCount]}}`
 
-* `wordcount` Number of words to generate (optional, default is 25)
+* `wordcount?: number` Number of words to generate (optional, default is 25)
 
 `{{lorem min=number max=number}}`
 
-* `min` and `max` Generate a random number of words in the range between min and max (both required)
+* `min: number` Minimum range for the random word count (required)
+* `max: number` Maximum range for the random word count (required)
 
 There are two ways this helper can be used. Both generate random sentences of lorem ipsum text with occasional punctuation (commas and periods/full-stops).
 
@@ -543,10 +545,10 @@ There are two ways this helper can be used. Both generate random sentences of lo
 {{lorem}} // Amet vel aliquam laoreet accumsan adipiscing velit... (etc)
 
 // Generates 5 words of lorem ipsum
-{{lorem 5}} //  Orci nisi laoreet maximus dictum.
+{{lorem 5}} // Orci nisi laoreet maximus dictum.
 
 // Generates a random number of words between 10 and 20
-{{lorem min=10 max=20}} //  Felis velit aliquam aliquet sollicitudin consequat... (etc)
+{{lorem min=10 max=20}} // Felis velit aliquam aliquet sollicitudin consequat... (etc)
 ```
 
 ### Lowercase
@@ -585,8 +587,8 @@ Converts the output of any string-based helper to uppercase. This uses the Handl
 
 `{{add number1 number2}}`
 
-* `number1` First number to add (required)
-* `number2` Second number to add (required)
+* `number1: number` First number to add (required)
+* `number2: number` Second number to add (required)
 
 Adds the two numbers together. This can be useful in creating 1-based indexes inside repeat blocks using the `@index` variable (which is normally zero-based).
 
@@ -610,7 +612,7 @@ Adds the two numbers together. This can be useful in creating 1-based indexes in
 
 `{{step increment}}`
 
-* `increment` How much to increment the generated index on each iteration (required)
+* `increment: number` How much to increment the generated index on each iteration (required)
 
 Creates a numeric step inside a repeat block that is a multiple of the index. (Note: this uses the `@index` variable internally and so can only be used inside `{{#repeat}}` and `{{#each}}` blocks).
 
