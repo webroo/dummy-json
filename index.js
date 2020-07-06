@@ -9,7 +9,7 @@ var dummyjson = {
   // Global seed for the random number generator
   seed: null,
 
-  parse: function (string, options) {
+  parse: function(string, options) {
     options = options || {};
 
     // Merge custom mockdata/helpers into the defaults, items with the same name will override
