@@ -64,7 +64,7 @@ Please view the following example on the [github page](https://github.com/webroo
       "name": "Leanne Brier",
       "work": "Connic",
       "email": "leanne.brier@connic.org",
-      "dob": "13/05/1987",
+      "dob": "1987",
       "address": "9 Coleman Avenue",
       "city": "Toronto",
       "optedin": false
@@ -130,7 +130,7 @@ A common use of Dummy JSON is to create a mock API endpoint that returns random 
 ```js
 const fs = require('fs');
 const express = require('express');
-const dummyjson = require('./dummy-json');
+const dummyjson = require('dummy-json');
 
 const template = fs.readFileSync('template.hbs', { encoding: 'utf8' });
 const app = express();
@@ -151,7 +151,7 @@ If you install Dummy JSON globally with `npm install -g dummy-json` you can use 
 
 ## Available helpers
 
-This library uses custom Handlebars helpers to generate the random data. Handlebars helpers are functions that are called whenever an expression is encountered in a template, such as `{{firstName}}`. You can learn how to write your own helpers in the section: [Writing your own helpers](#writing-your-own-helpers).
+Dummy JSON uses custom Handlebars helpers to generate the random data. Handlebars helpers are functions that are called whenever an expression is encountered in a template, such as `{{firstName}}`. You can learn how to write your own helpers in the section: [Writing your own helpers](#writing-your-own-helpers).
 
 ### Repeat
 
@@ -209,7 +209,7 @@ You can omit the comma by using `comma=false`, for example:
 {{#repeat 3 comma=false}}hello{{/repeat}} // hellohellohello
 ```
 
-You can get iteration position information inside the repeat block using the standard Handlebars variables `@index`, `@first`, `@last` and `@total`. Check out the helpers [Add](#add) and [Step](#step) to see how you can further modify the position values.
+You can get iteration position information inside the repeat block using the standard Handlebars variables `@index`, `@first`, `@last` and `@total`. Check out the helpers [Add](#add) and [Step](#step) to see how you can further modify the position values to create interesting indexes.
 
 ```js
 // Repeat the block 3 times using @index to modify the filename
@@ -290,7 +290,7 @@ By default the output uses [Date.toString()](https://developer.mozilla.org/en-US
 // Generate a random date between more specific values
 {{date '2015-06-01' '2015-06-30'}} // Mon Jun 22 2015 01:02:36 GMT+0100 (BST)
 
-// Generate a random date between even more specific values (inc. time)
+// Generate a random date between even more specific values (including time)
 {{date '2015-06-01T09:00' '2015-06-30T17:30'}} // Sun Jun 07 2015 23:55:16 GMT+0100 (BST)
 
 // Format the date using fecha
@@ -324,13 +324,13 @@ By default the output uses `HH:mm`. Alternatively the output can be formatted us
 
 `{{random ...items}}`
 
-* `items: (string | number)[]` One or more parameters from which to pick a random item (required)
+* `items: string | number` One or more parameters from which to pick a random item (required)
 
-Picks a random item from the given parameters. This is a convenient way to create small, inline random lists of your own. For more lengthy lists, or ones you wish to reuse, see the section on [Helpers that pick a random item from an array](#helpers-that-pick-a-random-item-from-an-array).
+Picks a random item from the given parameters. This is a convenient way to create small, inline random lists of your own. For more lengthy lists or ones you wish to reuse see the section on [Helpers that pick a random item from an array](#helpers-that-pick-a-random-item-from-an-array).
 
 ```js
-// The random helper will pick one of the provided strings
-{{random 'North' 'South' 'East' 'West'}} // 'South'
+// Randomly pick one of the provided strings
+{{random 'North' 'South' 'East' 'West'}} // South
 
 // You can also provide numbers
 {{random 50 100 150 200}} // 150
@@ -437,7 +437,7 @@ Generates a random US-style 5 digit zipcode.
 
 `{{postcode}}`
 
-Generates a random UK-style postcode in the format `AA9 9AA`.
+Generates a random UK-style postcode in the format `AB9 9CD`.
 
 ### Latitude
 
@@ -471,7 +471,7 @@ Generates a random phone number in the format `xxx-xxx-xxxx`, for example "123-4
 
 `{{color}}`
 
-Generates a random CSS color name, from a predefined list, such as "forestgreen", "black", etc.
+Generates a random CSS color name from a predefined list, such as "forestgreen", "black", etc.
 
 ### Hex color
 
@@ -520,7 +520,7 @@ Generates a random IPv6 address.
 Picks a single character from the given character set.
 
 ```js
-// Generates a random grade
+// Randomly pick one of the characters, in this case to generate a grade
 {{char "ABCDEF"}} // B
 
 // Generates a random currency symbol
@@ -555,7 +555,7 @@ There are two ways this helper can be used. Both generate random sentences of lo
 
 `{{lowercase (helper)}}`
 
-* `helper` Any helper that returns a string (required)
+* `helper` Any other helper that returns a string (required)
 
 Converts the output of any string-based helper to lowercase. This uses the Handlebars' [subexpression syntax](https://handlebarsjs.com/guide/expressions.html#subexpressions).
 
@@ -571,7 +571,7 @@ Converts the output of any string-based helper to lowercase. This uses the Handl
 
 `{{uppercase (helper)}}`
 
-* `helper` Any helper that returns a string (required)
+* `helper` Any other helper that returns a string (required)
 
 Converts the output of any string-based helper to uppercase. This uses the Handlebars' [subexpression syntax](https://handlebarsjs.com/guide/expressions.html#subexpressions).
 
@@ -691,7 +691,7 @@ To write your own helpers you need to create an object map of helper methods and
 ```js
 const myHelpers = {
   direction() {
-    // We use our own random() method to ensure the seeded random number generator is used
+    // We use dummyjson's random() method to ensure the seeded random number generator is used
     return dummyjson.utils.random() > 0.5 ? 'left' : 'right';
   }
 };
@@ -703,7 +703,7 @@ Your own helpers will be mixed with the built-in helpers, allowing you to use bo
 
 The helpers use the same syntax as regular Handlebars helpers, but instead of registering them with `Handlebars.registerHelper()` you pass them to `dummyjson.parse()`. For more information on writing helpers see the [Handlebars documentation](https://handlebarsjs.com/guide/block-helpers.html).
 
-Note: when generating data using random numbers you should always use the `dummyjson.utils` module. This ensures you're using the seeded random number generator and means your results will be repeatable if you ever decide to use a seed. See the section on [Seeded random data](#seeded-random-data) for more information and a complete list of methods available in `dummyjson.utils`.
+Note: when generating data using random numbers you should always use the functions from the `dummyjson.utils` module. This ensures you're using the seeded random number generator and means your results will be repeatable if you ever decide to use a seed. See the section on [Seeded random data](#seeded-random-data) for more information, and the [API](#api) for complete list of methods available in `dummyjson.utils`.
 
 ### Helpers that pick a random item from an array
 
@@ -748,7 +748,7 @@ const result = dummyjson.parse(template, { mockdata: myMockdata });
 
 ## Seeded random data
 
-By default dummyjson generates different results every time it's run. If you need repeatable dummy data then you can set a global seed for the pseudo random number generator:
+By default dummyjson generates different results every time it's run. If you need reproducible dummy data then you can set a global seed for the pseudo random number generator:
 
 ```js
 // Set the global seed, can be any string value
@@ -768,7 +768,7 @@ Note: a one-time seed will not overwrite the global `dummyjson.seed`, meaning su
 
 ### Ensuring your own helpers use the seed
 
-To ensure your own helpers generate repeatable data you must use the functions from the `dummyjson.utils` module whenever you want a random value. See the [API](#api) section for a complete list of functions.
+To ensure your own helpers generate reproducible data you must use the functions from the `dummyjson.utils` module whenever you want a random value. See the [API](#api) section for a complete list of functions.
 
 ```js
 const myHelpers = {
@@ -795,7 +795,7 @@ const myHelpers = {
 const result = dummyjson.parse(template, { helpers: myHelpers });
 ```
 
-Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described above in [Replacing default mock data](#replacing-default-mock-data).
+Note: If you replace any of the synchronized helpers then you will lose the syncing functionality. If you want to use a different set of names, addresses, etc, then use the technique described in [Replacing default mock data](#replacing-default-mock-data).
 
 ### Using other static data
 
@@ -838,7 +838,7 @@ As mentioned in the comment above you must always forward the `options` argument
 
 ### Using your own partials
 
-You can use Handlebars partials to encapsulate content into a reusable blocks. Partials are passed via the `options` param of `dummyjson.parse()`.
+You can use [Handlebars partials](https://handlebarsjs.com/guide/partials.html) to encapsulate content into a reusable blocks. Partials are passed via the `options` param of `dummyjson.parse()`.
 
 ```js
 const myPartials = {
