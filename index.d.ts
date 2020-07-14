@@ -51,7 +51,7 @@ interface DefaultHelpers {
   uppercase(value: any): string;
   add(a: number, b: number): string;
   step(inc: number, options?: any): string;
-};
+}
 
 interface Utils {
   setRandomSeed(seed: string): void;
