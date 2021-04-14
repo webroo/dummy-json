@@ -3,7 +3,7 @@
 Dummy JSON is a Node utility that allows you to generate random JSON data using Handlebars templates. It comes with a built-in collection of Handlebars helpers that generate common data values, such as names, numbers, dates, and also allows you to write your own.
 
 * [Getting started](#getting-started)
-* [Available helpers](#available-helpers)
+* [Built-in helpers](#built-in-helpers)
 * [Writing your own helpers](#writing-your-own-helpers)
 * [Replacing default mock data](#replacing-default-mock-data)
 * [Seeded random data](#seeded-random-data)
@@ -149,7 +149,7 @@ If you install Dummy JSON globally with `npm install -g dummy-json` you can use 
 
 	dummyjson template.hbs > output.json
 
-## Available helpers
+## Built-in helpers
 
 Dummy JSON uses custom Handlebars helpers to generate the random data. Handlebars helpers are functions that are called whenever an expression is encountered in a template, such as `{{firstName}}`. You can learn how to write your own helpers in the section: [Writing your own helpers](#writing-your-own-helpers).
 
@@ -652,7 +652,7 @@ You can use this in conjunction with the [Add](#add) helper and [subexpression s
 
 ## A note on synchronized helpers
 
-Several helpers, such as name and email, are linked together in order to synchronize their values. This gives the random data some continuity when used inside repeated blocks (although synchronization still occurs outside of repeat blocks). Synchronization happens automatically and doesn't require any additional work, for example:
+Several helpers, such as name and email, are linked together in order to synchronize their values. This helps gives the random data some continuity. Synchronization happens automatically and doesn't require any additional work, for example:
 
 ```js
 "firstName": "{{firstName}}", // Michael
@@ -787,8 +787,8 @@ You can replace any of the built-in helpers by simply creating your own with the
 
 ```js
 const myHelpers = {
+  // This version of {{postcode}} will now be used instead of the built-in one
   postcode() {
-    // This version of {{postcode}} will now be used instead of the built-in one
     return 'helloworld';
   }
 };
@@ -842,21 +842,21 @@ You can use [Handlebars partials](https://handlebarsjs.com/guide/partials.html) 
 
 ```js
 const myPartials = {
-  user: '{\
-    "id": {{@index}},\
-    "firstName": "{{firstName}}",\
-    "lastName": "{{lastName}}",\
-    "email": "{{email}}"\
-  }'
+  user: `{
+    "id": {{@index}},
+    "firstName": "{{firstName}}",
+    "lastName": "{{lastName}}",
+    "email": "{{email}}"
+  }`
 };
 
-const template = '{\
-    "users": [\
-      {{#repeat 3}}\
-        {{> user}}\
-      {{/repeat}}\
-    ]\
-  }';
+const template = `{
+  "users": [
+    {{#repeat 3}}
+    {{> user}}
+    {{/repeat}}
+  ]
+}`;
 
 const result = dummyjson.parse(template, { partials: myPartials });
 ```
