@@ -93,7 +93,7 @@ Install via npm:
 #### Generate a JSON string
 
 ```js
-const dummyjson = require('dummy-json');
+import dummyjson from 'dummy-json';
 
 const template = `{
   "name": "{{firstName}}",
@@ -107,8 +107,8 @@ const result = dummyjson.parse(template); // Returns a string
 Instead of using template strings directly in your code you can create a template file and load it using Node's `fs` utility:
 
 ```js
-const fs = require('fs');
-const dummyjson = require('dummy-json');
+import fs from 'fs';
+import dummyjson from 'dummy-json';
 
 const template = fs.readFileSync('mytemplate.hbs', { encoding: 'utf8' });
 const result = dummyjson.parse(template);
@@ -128,9 +128,9 @@ const obj = JSON.parse(result);
 A common use of Dummy JSON is to create a mock API endpoint that returns random data. Here's a quick example using Express:
 
 ```js
-const fs = require('fs');
-const express = require('express');
-const dummyjson = require('dummy-json');
+import fs from 'fs';
+import express from 'express';
+import dummyjson from 'dummy-json';
 
 const template = fs.readFileSync('template.hbs', { encoding: 'utf8' });
 const app = express();
